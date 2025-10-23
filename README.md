@@ -316,3 +316,4 @@ For questions or feedback about this project, please reach out through the repos
 ---
 
 **Made with ❤️ for those seeking their purpose** | *生き甲斐を見つけよう*
+# Deployment optimizado para Vercel
