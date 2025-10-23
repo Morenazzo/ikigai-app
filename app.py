@@ -22,8 +22,9 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 
 # Only initialize Flask-Session if not in serverless environment
-if os.getenv("VERCEL"):
-    # In Vercel, use built-in Flask sessions (signed cookies)
+# Vercel sets VERCEL_ENV automatically, AWS Lambda sets AWS_LAMBDA_FUNCTION_NAME
+if os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+    # In serverless, use built-in Flask sessions (signed cookies)
     app.config["SESSION_TYPE"] = None
 else:
     # In local development, use filesystem sessions
@@ -45,11 +46,11 @@ else:
 # Configure database (use SQLite by default, PostgreSQL if DATABASE_URL is set)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# In Vercel (serverless), prefer in-memory SQLite or PostgreSQL
-if os.getenv("VERCEL") and not DATABASE_URL:
-    # Use in-memory SQLite for serverless (ephemeral but works)
+# In serverless (Vercel/Lambda), prefer /tmp SQLite or PostgreSQL
+if (os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")) and not DATABASE_URL:
+    # Use /tmp for SQLite in serverless (ephemeral but works)
     DATABASE_URL = "sqlite:////tmp/project.db"
-    print("⚠️  Using ephemeral database in Vercel. Data will be lost on redeploy.")
+    print("⚠️  Using ephemeral database in serverless environment. Data will be lost on redeploy.")
     print("   For production, configure a PostgreSQL DATABASE_URL.")
 elif not DATABASE_URL:
     DATABASE_URL = "sqlite:///project.db"
