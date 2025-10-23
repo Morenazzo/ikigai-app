@@ -1,0 +1,701 @@
+{% extends "layout.html" %}
+{% block title %}Your Results - Divine Treasure{% endblock %}
+{% block main %}
+
+<div style="max-width: 1200px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 50px;">
+        <div style="font-size: 56px; margin-bottom: 15px;">🎁✨🦸‍♂️</div>
+        <h1 style="margin-bottom: 15px; color: var(--navy); font-size: 42px; font-weight: bold;">Your Divine Treasure Revealed</h1>
+        <p style="color: var(--teal-dark); font-size: 20px; max-width: 700px; margin: 0 auto; line-height: 1.6;">
+            Congratulations! You've discovered your unique <strong style="color: var(--pink);">SUPERPOWERS</strong>. <br>
+            This is your God-given <strong style="color: var(--turquoise);">Ikigai</strong> — your treasure to impact the world. 🌍
+        </p>
+        
+        {% if session.get("points_earned") %}
+        <div style="margin-top: 30px; padding: 30px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(255, 165, 0, 0.3); animation: bounceIn 0.8s ease; min-width: 400px;">
+            <div style="font-size: 48px; margin-bottom: 10px; text-align: center;">🏄‍♂️</div>
+            <h2 style="color: white; margin: 0 0 15px 0; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); text-align: center;">
+                +{{ session.get("points_earned") }} Surfer Points!
+            </h2>
+            
+            {% if session.get("points_breakdown") %}
+            <div style="background: rgba(255, 255, 255, 0.2); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                <p style="color: white; font-size: 14px; font-weight: bold; margin-bottom: 10px;">Desglose de puntos:</p>
+                <div style="color: white; font-size: 13px; line-height: 1.8;">
+                    <div>✓ Secciones Base: +{{ session.get("points_breakdown").get("base_sections", 40) }} pts</div>
+                    <div>✓ Intersecciones: +{{ session.get("points_breakdown").get("intersections", 60) }} pts</div>
+                    <div>✓ Palabras Ikigai: +{{ session.get("points_breakdown").get("ikigai_keywords", 30) }} pts</div>
+                    <div>✓ Visión de Impacto: +{{ session.get("points_breakdown").get("impact_vision", 20) }} pts</div>
+                    <div>✓ Bonus Completo: +{{ session.get("points_breakdown").get("completion_bonus", 50) }} pts</div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <p style="color: white; margin: 15px 0 0 0; font-size: 14px; opacity: 0.9; text-align: center;">
+                🎉 ¡Felicidades por descubrir tu Ikigai!
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if responses %}
+        {% set row = responses|first %}
+        <div class="result-card" style="margin-bottom: 40px; animation: fadeIn 0.5s ease;">
+            <!-- Ikigai Header -->
+            <div style="text-align: center; margin-bottom: 30px; padding: 40px; background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%); border-radius: 15px; color: white; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: 20px; right: 20px; font-size: 40px; opacity: 0.1;">🎁</div>
+                <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">Your Divine Treasure</div>
+                <h2 style="color: white; margin: 0; font-size: 36px; font-weight: bold;">✨ {{ row.ikigai }} ✨</h2>
+                <p style="color: white; opacity: 0.7; margin: 15px 0 20px 0; font-size: 14px;">
+                    Treasure Unlocked on {{ row.timestamp }} | Journey #{{ row.id }}
+                </p>
+                
+                <!-- PDF Download Button -->
+                <button onclick="downloadPDF()" class="btn btn-light" style="margin-top: 10px; padding: 10px 25px;">
+                    📥 Descargar PDF
+                </button>
+            </div>
+            
+            <!-- Impact Vision -->
+            {% if row.impact %}
+            <div style="margin-bottom: 30px; padding: 30px; background: linear-gradient(135deg, rgba(11, 183, 183, 0.1) 0%, rgba(0, 159, 213, 0.1) 100%); border-radius: 15px; border-left: 5px solid var(--turquoise);">
+                <h3 style="color: var(--turquoise); margin-bottom: 15px; display: flex; align-items: center; font-size: 22px;">
+                    <span style="font-size: 32px; margin-right: 15px;">🌍</span>
+                    Your Impact Vision
+                </h3>
+                <p style="color: var(--navy); line-height: 1.8; font-size: 16px; margin: 0;">
+                    {{ row.impact }}
+                </p>
+            </div>
+            {% endif %}
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px;">
+                <!-- What You Love -->
+                <div style="background: linear-gradient(135deg, rgba(237, 74, 109, 0.1) 0%, rgba(237, 74, 109, 0.05) 100%); padding: 20px; border-radius: 15px; border-left: 4px solid var(--pink);">
+                    <h4 style="color: var(--pink); margin-bottom: 15px; display: flex; align-items: center;">
+                        <span style="font-size: 24px; margin-right: 10px;">❤️</span>
+                        What You Love
+                    </h4>
+                    {% if row.love %}
+                        <ul style="color: var(--navy); line-height: 1.8; margin: 0; padding-left: 20px; list-style: none;">
+                            {% for item in row.love.split(',') %}
+                                <li style="margin-bottom: 8px;">✓ {{ item.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: var(--navy); margin: 0;">Not filled</p>
+                    {% endif %}
+                </div>
+                
+                <!-- What You're Good At -->
+                <div style="background: linear-gradient(135deg, rgba(0, 159, 213, 0.1) 0%, rgba(0, 159, 213, 0.05) 100%); padding: 20px; border-radius: 15px; border-left: 4px solid var(--sky-blue);">
+                    <h4 style="color: var(--sky-blue); margin-bottom: 15px; display: flex; align-items: center;">
+                        <span style="font-size: 24px; margin-right: 10px;">⭐</span>
+                        What You're Good At
+                    </h4>
+                    {% if row.good %}
+                        <ul style="color: var(--navy); line-height: 1.8; margin: 0; padding-left: 20px; list-style: none;">
+                            {% for item in row.good.split(',') %}
+                                <li style="margin-bottom: 8px;">✓ {{ item.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: var(--navy); margin: 0;">Not filled</p>
+                    {% endif %}
+                </div>
+                
+                <!-- What You Can Be Paid For -->
+                <div style="background: linear-gradient(135deg, rgba(11, 183, 183, 0.1) 0%, rgba(11, 183, 183, 0.05) 100%); padding: 20px; border-radius: 15px; border-left: 4px solid var(--turquoise);">
+                    <h4 style="color: var(--turquoise); margin-bottom: 15px; display: flex; align-items: center;">
+                        <span style="font-size: 24px; margin-right: 10px;">💰</span>
+                        What You Can Be Paid For
+                    </h4>
+                    {% if row.paid %}
+                        <ul style="color: var(--navy); line-height: 1.8; margin: 0; padding-left: 20px; list-style: none;">
+                            {% for item in row.paid.split(',') %}
+                                <li style="margin-bottom: 8px;">✓ {{ item.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: var(--navy); margin: 0;">Not filled</p>
+                    {% endif %}
+                </div>
+                
+                <!-- What The World Needs -->
+                <div style="background: linear-gradient(135deg, rgba(157, 128, 185, 0.1) 0%, rgba(157, 128, 185, 0.05) 100%); padding: 20px; border-radius: 15px; border-left: 4px solid var(--purple);">
+                    <h4 style="color: var(--purple); margin-bottom: 15px; display: flex; align-items: center;">
+                        <span style="font-size: 24px; margin-right: 10px;">🌍</span>
+                        What The World Needs
+                    </h4>
+                    {% if row.needs %}
+                        <ul style="color: var(--navy); line-height: 1.8; margin: 0; padding-left: 20px; list-style: none;">
+                            {% for item in row.needs.split(',') %}
+                                <li style="margin-bottom: 8px;">✓ {{ item.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="color: var(--navy); margin: 0;">Not filled</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid var(--light-gray);">
+                <h3 style="color: var(--navy); margin-bottom: 20px; text-align: center;">The Intersections</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
+                    <!-- Passion -->
+                    <div style="text-align: center; padding: 20px; background: var(--light-gray); border-radius: 15px;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 15px; background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                            💖
+                        </div>
+                        <h5 style="color: var(--pink); margin-bottom: 10px;">Passion</h5>
+                        {% if row.passion %}
+                            <ul style="font-size: 13px; color: var(--navy); margin: 0; padding-left: 15px; list-style: none; text-align: left;">
+                                {% for item in row.passion.split(',') %}
+                                    <li style="margin-bottom: 5px;">• {{ item.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 14px; color: var(--navy); margin: 0;">Not filled</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Mission -->
+                    <div style="text-align: center; padding: 20px; background: var(--light-gray); border-radius: 15px;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 15px; background: linear-gradient(135deg, var(--purple) 0%, var(--sky-blue) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                            🎯
+                        </div>
+                        <h5 style="color: var(--purple); margin-bottom: 10px;">Mission</h5>
+                        {% if row.mission %}
+                            <ul style="font-size: 13px; color: var(--navy); margin: 0; padding-left: 15px; list-style: none; text-align: left;">
+                                {% for item in row.mission.split(',') %}
+                                    <li style="margin-bottom: 5px;">• {{ item.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 14px; color: var(--navy); margin: 0;">Not filled</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Vocation -->
+                    <div style="text-align: center; padding: 20px; background: var(--light-gray); border-radius: 15px;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 15px; background: linear-gradient(135deg, var(--sky-blue) 0%, var(--turquoise) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                            🌟
+                        </div>
+                        <h5 style="color: var(--sky-blue); margin-bottom: 10px;">Vocation</h5>
+                        {% if row.vocation %}
+                            <ul style="font-size: 13px; color: var(--navy); margin: 0; padding-left: 15px; list-style: none; text-align: left;">
+                                {% for item in row.vocation.split(',') %}
+                                    <li style="margin-bottom: 5px;">• {{ item.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 14px; color: var(--navy); margin: 0;">Not filled</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Profession -->
+                    <div style="text-align: center; padding: 20px; background: var(--light-gray); border-radius: 15px;">
+                        <div style="width: 60px; height: 60px; margin: 0 auto 15px; background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                            💼
+                        </div>
+                        <h5 style="color: var(--turquoise); margin-bottom: 10px;">Profession</h5>
+                        {% if row.profession %}
+                            <ul style="font-size: 13px; color: var(--navy); margin: 0; padding-left: 15px; list-style: none; text-align: left;">
+                                {% for item in row.profession.split(',') %}
+                                    <li style="margin-bottom: 5px;">• {{ item.strip() }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 14px; color: var(--navy); margin: 0;">Not filled</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ikigai Diagram - Shown Once with Most Recent Data -->
+        {% set latest = responses|first %}
+        <div id="ikigai-diagram" style="margin: 60px 0 40px; padding: 40px; background: white; border-radius: 20px; border: 3px solid var(--turquoise); box-shadow: 0 10px 40px rgba(11, 183, 183, 0.2);">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 48px; margin-bottom: 10px;">✨🎁✨</div>
+                <h3 style="color: var(--navy); font-size: 28px; margin-bottom: 10px;">Your Complete Ikigai Map</h3>
+                <p style="color: var(--teal-dark); font-size: 16px;">The visual representation of your divine treasure</p>
+            </div>
+            
+            <div style="position: relative; width: 100%; max-width: 700px; margin: 0 auto; aspect-ratio: 1; padding: 20px;">
+                <!-- Center Ikigai -->
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); color: white; padding: 30px 40px; border-radius: 50%; min-width: 200px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">YOUR IKIGAI</div>
+                    <div style="font-size: 18px; font-weight: bold; line-height: 1.4;">{{ latest.ikigai }}</div>
+                </div>
+                
+                <!-- Top Circle: What You Love -->
+                <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 280px; height: 280px; border: 4px solid var(--navy); border-radius: 50%; display: flex; align-items: start; justify-content: center; padding-top: 25px; background: rgba(237, 74, 109, 0.05); overflow: hidden;">
+                    <div style="text-align: center; max-width: 85%; max-height: 90%; overflow-y: auto;">
+                        <div style="font-weight: bold; color: var(--pink); margin-bottom: 8px; font-size: 14px;">❤️ What You Love</div>
+                        <div style="font-size: 10px; color: var(--navy); line-height: 1.5; text-align: left;">
+                            {% for item in latest.love.split(',')[:5] %}
+                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                            {% endfor %}
+                            {% if latest.love.split(',')|length > 5 %}
+                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.love.split(',')|length - 5 }} más...</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Circle: What You Can Be Paid For -->
+                <div style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 280px; height: 280px; border: 4px solid var(--navy); border-radius: 50%; display: flex; align-items: end; justify-content: center; padding-bottom: 25px; background: rgba(11, 183, 183, 0.05); overflow: hidden;">
+                    <div style="text-align: center; max-width: 85%; max-height: 90%; overflow-y: auto;">
+                        <div style="font-weight: bold; color: var(--turquoise); margin-bottom: 8px; font-size: 14px;">💰 What You Can Be Paid For</div>
+                        <div style="font-size: 10px; color: var(--navy); line-height: 1.5; text-align: left;">
+                            {% for item in latest.paid.split(',')[:5] %}
+                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                            {% endfor %}
+                            {% if latest.paid.split(',')|length > 5 %}
+                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.paid.split(',')|length - 5 }} más...</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Left Circle: What You're Good At -->
+                <div style="position: absolute; top: 50%; left: 0; transform: translateY(-50%); width: 280px; height: 280px; border: 4px solid var(--turquoise); border-radius: 50%; display: flex; align-items: center; justify-content: start; padding-left: 25px; background: rgba(0, 159, 213, 0.05); overflow: hidden;">
+                    <div style="text-align: left; max-width: 75%; max-height: 85%; overflow-y: auto;">
+                        <div style="font-weight: bold; color: var(--sky-blue); margin-bottom: 8px; font-size: 14px;">⭐ What You're Good At</div>
+                        <div style="font-size: 10px; color: var(--navy); line-height: 1.5;">
+                            {% for item in latest.good.split(',')[:5] %}
+                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                            {% endfor %}
+                            {% if latest.good.split(',')|length > 5 %}
+                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.good.split(',')|length - 5 }} más...</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Circle: What The World Needs -->
+                <div style="position: absolute; top: 50%; right: 0; transform: translateY(-50%); width: 280px; height: 280px; border: 4px solid var(--turquoise); border-radius: 50%; display: flex; align-items: center; justify-content: end; padding-right: 25px; background: rgba(157, 128, 185, 0.05); overflow: hidden;">
+                    <div style="text-align: left; max-width: 75%; max-height: 85%; overflow-y: auto;">
+                        <div style="font-weight: bold; color: var(--purple); margin-bottom: 8px; font-size: 14px;">🌍 What The World Needs</div>
+                        <div style="font-size: 10px; color: var(--navy); line-height: 1.5;">
+                            {% for item in latest.needs.split(',')[:5] %}
+                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                            {% endfor %}
+                            {% if latest.needs.split(',')|length > 5 %}
+                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.needs.split(',')|length - 5 }} más...</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Intersection Labels -->
+                <div style="position: absolute; top: 25%; left: 25%; transform: translate(-50%, -50%); background: var(--pink-light); color: white; padding: 8px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 10px rgba(237, 74, 109, 0.3);">
+                    Passion
+                </div>
+                <div style="position: absolute; top: 25%; right: 25%; transform: translate(50%, -50%); background: var(--purple); color: white; padding: 8px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 10px rgba(157, 128, 185, 0.3);">
+                    Mission
+                </div>
+                <div style="position: absolute; bottom: 25%; left: 25%; transform: translate(-50%, 50%); background: var(--sky-blue); color: white; padding: 8px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 10px rgba(0, 159, 213, 0.3);">
+                    Profession
+                </div>
+                <div style="position: absolute; bottom: 25%; right: 25%; transform: translate(50%, 50%); background: var(--turquoise); color: white; padding: 8px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; box-shadow: 0 2px 10px rgba(11, 183, 183, 0.3);">
+                    Vocation
+                </div>
+            </div>
+        </div>
+        
+        <!-- AI Analysis Section -->
+        <div style="margin-top: 60px; padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; color: white;">
+            <h2 style="text-align: center; margin-bottom: 30px; color: white;">🤖 Análisis con Inteligencia Artificial</h2>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button class="btn btn-light btn-lg" onclick="getAIAnalysis()" id="aiAnalysisBtn" style="font-size: 18px; padding: 15px 40px;">
+                    ✨ Obtener Análisis Completo con IA
+                </button>
+            </div>
+            
+            <div id="aiAnalysisLoading" style="display: none; text-align: center; margin: 20px 0; color: white;">
+                <span class="spinner-border spinner-border-sm" role="status"></span> Analizando tu Ikigai...
+            </div>
+            
+            <div id="aiAnalysisResult" style="display: none; margin-top: 30px; padding: 30px; background: white; border-radius: 15px; color: var(--navy);"></div>
+            
+            <!-- Ask AI a Question -->
+            <div style="margin-top: 30px; padding: 25px; background: rgba(255, 255, 255, 0.1); border-radius: 15px;">
+                <h3 style="color: white; margin-bottom: 15px; text-align: center;">💬 Pregúntale a la IA sobre tu Ikigai</h3>
+                <div style="display: flex; gap: 10px; max-width: 800px; margin: 0 auto;">
+                    <input 
+                        type="text" 
+                        id="aiQuestion" 
+                        placeholder="Ej: ¿Cómo puedo empezar a vivir mi Ikigai?"
+                        style="flex: 1; padding: 12px 20px; border-radius: 25px; border: none; font-size: 16px;"
+                    />
+                    <button class="btn btn-light" onclick="askAIQuestion()" id="aiQuestionBtn" style="padding: 12px 30px; border-radius: 25px;">
+                        Preguntar
+                    </button>
+                </div>
+                <div id="aiQuestionLoading" style="display: none; text-align: center; margin-top: 15px; color: white;">
+                    <span class="spinner-border spinner-border-sm" role="status"></span> Pensando...
+                </div>
+                <div id="aiQuestionResult" style="display: none; margin-top: 20px; padding: 20px; background: white; border-radius: 10px; color: var(--navy);"></div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="/exercise" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+                🔄 Start New Journey
+            </a>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 60px 20px; background: var(--light-gray); border-radius: 20px;">
+            <div style="font-size: 80px; margin-bottom: 20px;">🧭</div>
+            <h2 style="color: var(--navy); margin-bottom: 15px;">No Results Yet</h2>
+            <p style="color: var(--teal-dark); margin-bottom: 30px; font-size: 18px;">
+                Start your journey to discover your Ikigai!
+            </p>
+            <a href="/exercise" class="btn btn-primary" style="text-decoration: none; display: inline-block; font-size: 18px;">
+                Begin Exercise ✨
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+</style>
+
+{% if responses %}
+<!-- PDF Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// Store Ikigai data for AI analysis
+const ikigaiData = {
+    love: "{{ responses[0].love }}",
+    good: "{{ responses[0].good }}",
+    paid: "{{ responses[0].paid }}",
+    needs: "{{ responses[0].needs }}",
+    passion: "{{ responses[0].passion }}",
+    mission: "{{ responses[0].mission }}",
+    vocation: "{{ responses[0].vocation }}",
+    profession: "{{ responses[0].profession }}",
+    ikigai: "{{ responses[0].ikigai }}",
+    impact: "{{ responses[0].impact }}"
+};
+
+async function getAIAnalysis() {
+    const btn = document.getElementById('aiAnalysisBtn');
+    const loading = document.getElementById('aiAnalysisLoading');
+    const result = document.getElementById('aiAnalysisResult');
+    
+    btn.disabled = true;
+    loading.style.display = 'block';
+    result.style.display = 'none';
+    
+    try {
+        const response = await fetch('/ai/analyze_results', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ikigai_data: ikigaiData
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+        }
+        
+        // Display analysis with markdown
+        result.innerHTML = marked.parse(data.analysis || data.analysis);
+        result.style.display = 'block';
+        
+        // Scroll to result
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        // Try to display without markdown
+        try {
+            const response2 = await fetch('/ai/analyze_results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ikigai_data: ikigaiData })
+            });
+            const data2 = await response2.json();
+            result.innerHTML = '<div style="white-space: pre-wrap;">' + (data2.analysis || 'Error al generar análisis') + '</div>';
+            result.style.display = 'block';
+        } catch (e) {
+            alert('Hubo un error al obtener el análisis. Por favor verifica tu configuración de OpenAI API.');
+        }
+    } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+
+async function askAIQuestion() {
+    const questionInput = document.getElementById('aiQuestion');
+    const question = questionInput.value.trim();
+    const btn = document.getElementById('aiQuestionBtn');
+    const loading = document.getElementById('aiQuestionLoading');
+    const result = document.getElementById('aiQuestionResult');
+    
+    if (!question) {
+        alert('Por favor escribe una pregunta');
+        return;
+    }
+    
+    btn.disabled = true;
+    loading.style.display = 'block';
+    result.style.display = 'none';
+    
+    try {
+        const response = await fetch('/ai/analyze_results', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ikigai_data: ikigaiData,
+                question: question
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+        }
+        
+        // Display answer
+        result.innerHTML = '<div style="white-space: pre-wrap;">' + data.analysis + '</div>';
+        result.style.display = 'block';
+        
+        // Clear input
+        questionInput.value = '';
+        
+        // Scroll to result
+        result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        alert('Hubo un error al procesar tu pregunta. Por favor verifica tu configuración de OpenAI API.');
+    } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+
+// Allow Enter key to submit question
+document.getElementById('aiQuestion')?.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        askAIQuestion();
+    }
+});
+
+// PDF Download Function with Visual Diagram
+async function downloadPDF() {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('p', 'mm', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 20;
+        let yPos = margin;
+        
+        // Function to add category items as list
+        function addCategoryList(doc, title, items, color, yPosition) {
+            doc.setFontSize(12);
+            doc.setTextColor(color[0], color[1], color[2]);
+            doc.text(title, margin, yPosition);
+            yPosition += 7;
+            
+            doc.setFontSize(9);
+            doc.setTextColor(0, 0, 0);
+            
+            if (items && items.trim()) {
+                const itemsList = items.split(',').map(i => i.trim()).filter(i => i);
+                itemsList.forEach((item, index) => {
+                    if (yPosition > pageHeight - 20) {
+                        doc.addPage();
+                        yPosition = margin;
+                    }
+                    const itemText = `✓ ${item}`;
+                    const lines = doc.splitTextToSize(itemText, pageWidth - 2 * margin - 5);
+                    doc.text(lines, margin + 5, yPosition);
+                    yPosition += lines.length * 5;
+                });
+            } else {
+                doc.text('No especificado', margin + 5, yPosition);
+                yPosition += 5;
+            }
+            
+            return yPosition + 8;
+        }
+        
+        // PAGE 1: Title and Impact Vision
+        doc.setFontSize(26);
+        doc.setTextColor(11, 183, 183);
+        doc.text('🎁 Tu Ikigai Descubierto', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 15;
+        
+        doc.setFontSize(18);
+        doc.setTextColor(237, 74, 109);
+        const ikigaiText = doc.splitTextToSize('{{ responses[0].ikigai }}', pageWidth - 2 * margin);
+        doc.text(ikigaiText, pageWidth / 2, yPos, { align: 'center' });
+        yPos += ikigaiText.length * 7 + 8;
+        
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text('{{ responses[0].timestamp }}', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 15;
+        
+        // Impact Vision
+        if (ikigaiData.impact && ikigaiData.impact.trim()) {
+            doc.setFontSize(14);
+            doc.setTextColor(11, 183, 183);
+            doc.text('🌍 Tu Visión de Impacto', margin, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.setTextColor(40, 40, 40);
+            const impactLines = doc.splitTextToSize(ikigaiData.impact, pageWidth - 2 * margin);
+            doc.text(impactLines, margin, yPos);
+            yPos += impactLines.length * 6 + 12;
+        }
+        
+        // Add divider
+        doc.setDrawColor(11, 183, 183);
+        doc.setLineWidth(0.5);
+        doc.line(margin, yPos, pageWidth - margin, yPos);
+        yPos += 12;
+        
+        // PAGE 2: The Four Circles
+        doc.addPage();
+        yPos = margin;
+        
+        doc.setFontSize(16);
+        doc.setTextColor(11, 183, 183);
+        doc.text('Los 4 Círculos de tu Ikigai', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 15;
+        
+        // What You Love
+        yPos = addCategoryList(doc, '❤️ What You Love', ikigaiData.love, [237, 74, 109], yPos);
+        
+        // What You're Good At  
+        if (yPos > pageHeight - 60) {
+            doc.addPage();
+            yPos = margin;
+        }
+        yPos = addCategoryList(doc, '⭐ What You\'re Good At', ikigaiData.good, [0, 159, 213], yPos);
+        
+        // What You Can Be Paid For
+        if (yPos > pageHeight - 60) {
+            doc.addPage();
+            yPos = margin;
+        }
+        yPos = addCategoryList(doc, '💰 What You Can Be Paid For', ikigaiData.paid, [11, 183, 183], yPos);
+        
+        // What The World Needs
+        if (yPos > pageHeight - 60) {
+            doc.addPage();
+            yPos = margin;
+        }
+        yPos = addCategoryList(doc, '🌍 What The World Needs', ikigaiData.needs, [157, 128, 185], yPos);
+        
+        // PAGE 3: Intersections
+        doc.addPage();
+        yPos = margin;
+        
+        doc.setFontSize(16);
+        doc.setTextColor(11, 183, 183);
+        doc.text('Las Intersecciones', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 15;
+        
+        // Passion
+        yPos = addCategoryList(doc, '💖 Passion (Love + Good At)', ikigaiData.passion, [237, 74, 109], yPos);
+        
+        // Mission
+        if (yPos > pageHeight - 60) {
+            doc.addPage();
+            yPos = margin;
+        }
+        yPos = addCategoryList(doc, '🎯 Mission (Love + World Needs)', ikigaiData.mission, [157, 128, 185], yPos);
+        
+        // Profession
+        if (yPos > pageHeight - 60) {
+            doc.addPage();
+            yPos = margin;
+        }
+        yPos = addCategoryList(doc, '💼 Profession (Good At + Paid For)', ikigaiData.profession, [11, 183, 183], yPos);
+        
+        // Vocation
+        if (yPos > pageHeight - 60) {
+            doc.addPage();
+            yPos = margin;
+        }
+        yPos = addCategoryList(doc, '🌟 Vocation (World Needs + Paid For)', ikigaiData.vocation, [0, 159, 213], yPos);
+        
+        // PAGE 4: Visual Diagram
+        doc.addPage();
+        
+        // Show loading message
+        alert('Generando PDF con diagrama visual... esto tomará unos segundos.');
+        
+        // Capture the visual diagram
+        const diagramElement = document.getElementById('ikigai-diagram');
+        const canvas = await html2canvas(diagramElement, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            logging: false,
+            useCORS: true
+        });
+        
+        const imgData = canvas.toDataURL('image/png');
+        const imgWidth = pageWidth - 2 * margin;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        
+        // Center the image on the page
+        const yOffset = (pageHeight - imgHeight) / 2;
+        doc.addImage(imgData, 'PNG', margin, Math.max(yOffset, margin), imgWidth, Math.min(imgHeight, pageHeight - 2 * margin));
+        
+        // Save the PDF
+        doc.save(`Mi-Ikigai-${new Date().toISOString().split('T')[0]}.pdf`);
+        
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        alert('Hubo un error al generar el PDF. Por favor intenta de nuevo.');
+    }
+}
+</script>
+{% endif %}
+
+{% endblock %}

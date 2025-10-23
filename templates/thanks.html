@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Congratulations!
+{% endblock %}
+
+{% block main %}
+
+<div class="celebration">
+    <div class="celebration-icon">🎉</div>
+    <h1 style="color: var(--navy); margin: 30px 0;">Congratulations!</h1>
+    <h2 style="color: var(--teal-dark); margin-bottom: 40px;">You've Discovered Your Ikigai</h2>
+    
+    <p style="font-size: 18px; color: var(--dark-blue); max-width: 600px; margin: 0 auto 40px auto; line-height: 1.8;">
+        You've taken an important step in understanding your purpose. Your Ikigai represents the intersection of what you love, what you're good at, what the world needs, and what you can be paid for.
+    </p>
+    
+    <div style="background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); padding: 30px; border-radius: 20px; max-width: 700px; margin: 0 auto 40px auto; color: white;">
+        <h3 style="margin-bottom: 15px; color: white;">What's Next?</h3>
+        <ul style="text-align: left; list-style: none; padding: 0;">
+            <li style="margin: 10px 0; padding-left: 30px; position: relative;">
+                <span style="position: absolute; left: 0;">✨</span>
+                Review your results and reflect on the patterns you discovered
+            </li>
+            <li style="margin: 10px 0; padding-left: 30px; position: relative;">
+                <span style="position: absolute; left: 0;">📊</span>
+                See how your journey compares with others in our community
+            </li>
+            <li style="margin: 10px 0; padding-left: 30px; position: relative;">
+                <span style="position: absolute; left: 0;">🎯</span>
+                Use your Ikigai to guide your career and life decisions
+            </li>
+            <li style="margin: 10px 0; padding-left: 30px; position: relative;">
+                <span style="position: absolute; left: 0;">💫</span>
+                Share your experience and inspire others
+            </li>
+        </ul>
+    </div>
+    
+    <div class="button-group" style="margin-top: 40px;">
+        <a href="/results" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
+            📋 View My Results
+        </a>
+        <a href="/impact" class="btn btn-secondary" style="text-decoration: none; display: inline-block; background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);">
+            🌍 See Community Impact
+        </a>
+    </div>
+    
+    <div style="margin-top: 60px; padding: 30px; background: var(--light-gray); border-radius: 15px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <h4 style="color: var(--navy); margin-bottom: 15px;">💡 Remember</h4>
+        <p style="color: var(--teal-dark); font-style: italic;">
+            "Your Ikigai is not something you find once and forget. It evolves as you grow. Revisit this exercise whenever you feel the need to realign with your purpose."
+        </p>
+    </div>
+</div>
+
+<style>
+.celebration {
+    animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%);
+    border: none;
+    color: white;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(237, 74, 109, 0.4);
+}
+</style>
+
+{% endblock %}

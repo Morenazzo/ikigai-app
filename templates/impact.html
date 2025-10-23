@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block title %}Community Impact{% endblock %}
+{% block main %}
+
+<div style="max-width: 1200px; margin: 0 auto;">
+    <h1 style="text-align: center; margin-bottom: 10px; color: var(--navy);">Community Impact</h1>
+    <p style="text-align: center; color: var(--teal-dark); margin-bottom: 50px; font-size: 18px;">
+        Join a global community discovering their purpose
+    </p>
+    
+    <!-- Impact Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 60px;">
+        <div style="background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); padding: 40px; border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(11, 183, 183, 0.3);">
+            <div style="font-size: 64px; font-weight: bold; margin-bottom: 10px;">{{ count }}</div>
+            <div style="font-size: 20px; opacity: 0.9;">Journeys Completed</div>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, var(--pink) 0%, var(--purple) 100%); padding: 40px; border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(237, 74, 109, 0.3);">
+            <div style="font-size: 64px; font-weight: bold; margin-bottom: 10px;">∞</div>
+            <div style="font-size: 20px; opacity: 0.9;">Lives Transformed</div>
+        </div>
+        
+        <div style="background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%); padding: 40px; border-radius: 20px; text-align: center; color: white; box-shadow: 0 10px 30px rgba(0, 22, 57, 0.3);">
+            <div style="font-size: 64px; font-weight: bold; margin-bottom: 10px;">🌍</div>
+            <div style="font-size: 20px; opacity: 0.9;">Global Community</div>
+        </div>
+    </div>
+    
+    {% if responses %}
+        <h2 style="color: var(--navy); margin-bottom: 30px; text-align: center;">Recent Discoveries</h2>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-bottom: 50px;">
+            {% for row in responses[:12] %}
+            <div style="background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-top: 4px solid var(--turquoise); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08)';">
+                <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                    <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-right: 15px;">
+                        ✨
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 style="color: var(--navy); margin: 0; font-size: 18px;">{{ row.ikigai if row.ikigai else "Anonymous Journey" }}</h4>
+                        <p style="color: var(--teal-dark); margin: 5px 0 0 0; font-size: 13px;">
+                            {{ row.timestamp }}
+                        </p>
+                    </div>
+                </div>
+                <div style="background: var(--light-gray); padding: 15px; border-radius: 10px;">
+                    <p style="font-size: 14px; color: var(--navy); margin: 0; line-height: 1.6;">
+                        "Every journey to discover one's Ikigai is unique and inspiring."
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if count > 12 %}
+        <div style="text-align: center; margin-top: 40px; padding: 30px; background: var(--light-gray); border-radius: 15px;">
+            <p style="color: var(--navy); font-size: 18px; margin: 0;">
+                <strong>+ {{ count - 12 }} more</strong> amazing journeys have been completed! 🎉
+            </p>
+        </div>
+        {% endif %}
+        
+    {% else %}
+        <div style="text-align: center; padding: 60px 20px; background: var(--light-gray); border-radius: 20px;">
+            <div style="font-size: 80px; margin-bottom: 20px;">🌱</div>
+            <h2 style="color: var(--navy); margin-bottom: 15px;">Be the First</h2>
+            <p style="color: var(--teal-dark); margin-bottom: 30px; font-size: 18px;">
+                Start the movement and inspire others to discover their Ikigai!
+            </p>
+            <a href="/exercise" class="btn btn-primary" style="text-decoration: none; display: inline-block; font-size: 18px;">
+                Begin Your Journey ✨
+            </a>
+        </div>
+    {% endif %}
+    
+    <!-- Call to Action -->
+    <div style="margin-top: 60px; padding: 50px; background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%); border-radius: 20px; text-align: center; color: white;">
+        <h2 style="color: white; margin-bottom: 20px;">Ready to Find Your Purpose?</h2>
+        <p style="font-size: 18px; margin-bottom: 30px; opacity: 0.9; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Join thousands of people who have discovered their Ikigai and transformed their lives. Your journey starts now.
+        </p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="/exercise" class="btn btn-primary" style="text-decoration: none; display: inline-block; font-size: 18px; padding: 15px 40px;">
+                🎯 Start My Journey
+            </a>
+            <a href="/share" class="btn" style="text-decoration: none; display: inline-block; font-size: 18px; padding: 15px 40px; background: transparent; border: 2px solid white; color: white; border-radius: 50px; font-weight: bold;">
+                💬 Share Your Story
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
