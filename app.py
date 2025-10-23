@@ -14,6 +14,9 @@ from helpers import apology, login_required
 # Configure application
 app = Flask(__name__)
 
+# Secret key for sessions
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
+
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
