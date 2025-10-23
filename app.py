@@ -17,10 +17,17 @@ app = Flask(__name__)
 # Secret key for sessions
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
 
-# Configure session to use filesystem (instead of signed cookies)
+# Configure session - use signed cookies for serverless compatibility
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+
+# Only initialize Flask-Session if not in serverless environment
+if os.getenv("VERCEL"):
+    # In Vercel, use built-in Flask sessions (signed cookies)
+    app.config["SESSION_TYPE"] = None
+else:
+    # In local development, use filesystem sessions
+    Session(app)
 
 # Load .env (Neon credentials and OpenAI key)
 load_dotenv()
@@ -36,7 +43,16 @@ else:
     print("⚠️  OpenAI API key not configured. AI features will be disabled.")
 
 # Configure database (use SQLite by default, PostgreSQL if DATABASE_URL is set)
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///project.db")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# In Vercel (serverless), prefer in-memory SQLite or PostgreSQL
+if os.getenv("VERCEL") and not DATABASE_URL:
+    # Use in-memory SQLite for serverless (ephemeral but works)
+    DATABASE_URL = "sqlite:////tmp/project.db"
+    print("⚠️  Using ephemeral database in Vercel. Data will be lost on redeploy.")
+    print("   For production, configure a PostgreSQL DATABASE_URL.")
+elif not DATABASE_URL:
+    DATABASE_URL = "sqlite:///project.db"
 
 # Normalize older postgres scheme
 if DATABASE_URL.startswith("postgres://"):
@@ -45,89 +61,101 @@ if DATABASE_URL.startswith("postgres://"):
 # Try to connect to database with fallback to SQLite
 try:
     db = SQL(DATABASE_URL)
-    print(f"✓ Conectado a base de datos: {DATABASE_URL.split('@')[0] if '@' in DATABASE_URL else 'SQLite local'}")
+    print(f"✓ Conectado a base de datos: {DATABASE_URL.split('@')[0] if '@' in DATABASE_URL else 'SQLite'}")
 except Exception as e:
-    print(f"✗ No se pudo conectar a {DATABASE_URL.split('@')[1] if '@' in DATABASE_URL else DATABASE_URL}")
-    print(f"  Usando SQLite local como respaldo...")
-    DATABASE_URL = "sqlite:///project.db"
-    db = SQL(DATABASE_URL)
+    print(f"✗ Error conectando a base de datos: {str(e)}")
+    print(f"  Usando SQLite en /tmp como respaldo...")
+    DATABASE_URL = "sqlite:////tmp/project.db"
+    try:
+        db = SQL(DATABASE_URL)
+    except Exception as e2:
+        print(f"✗ Error crítico: {str(e2)}")
+        db = None
 
 
 def ensure_tables() -> None:
     """Create required tables if they don't exist (works for SQLite and Postgres)."""
-    url = DATABASE_URL.lower()
-    is_sqlite = url.startswith("sqlite")
+    if not db:
+        print("⚠️  Database not initialized. Skipping table creation.")
+        return
+    
+    try:
+        url = DATABASE_URL.lower() if DATABASE_URL else "sqlite"
+        is_sqlite = url.startswith("sqlite")
 
-    if is_sqlite:
-        # SQLite DDL
-        db.execute(
-            """
-            CREATE TABLE IF NOT EXISTS ikigai_responses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                love TEXT,
-                needs TEXT,
-                paid TEXT,
-                good TEXT,
-                passion TEXT,
-                mission TEXT,
-                vocation TEXT,
-                profession TEXT,
-                ikigai TEXT,
-                impact TEXT,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        if is_sqlite:
+            # SQLite DDL
+            db.execute(
+                """
+                CREATE TABLE IF NOT EXISTS ikigai_responses (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    love TEXT,
+                    needs TEXT,
+                    paid TEXT,
+                    good TEXT,
+                    passion TEXT,
+                    mission TEXT,
+                    vocation TEXT,
+                    profession TEXT,
+                    ikigai TEXT,
+                    impact TEXT,
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                )
+                """
             )
-            """
-        )
-        db.execute(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT UNIQUE NOT NULL,
-                hash TEXT NOT NULL,
-                surfer_points INTEGER DEFAULT 0
+            db.execute(
+                """
+                CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT UNIQUE NOT NULL,
+                    hash TEXT NOT NULL,
+                    surfer_points INTEGER DEFAULT 0
+                )
+                """
             )
-            """
-        )
-        # Add surfer_points column if it doesn't exist (for existing databases)
-        try:
-            db.execute("ALTER TABLE users ADD COLUMN surfer_points INTEGER DEFAULT 0")
-        except:
-            pass  # Column already exists
-    else:
-        # Postgres DDL
-        db.execute(
-            """
-            CREATE TABLE IF NOT EXISTS ikigai_responses (
-                id SERIAL PRIMARY KEY,
-                love TEXT,
-                needs TEXT,
-                paid TEXT,
-                good TEXT,
-                passion TEXT,
-                mission TEXT,
-                vocation TEXT,
-                profession TEXT,
-                ikigai TEXT,
-                impact TEXT,
-                timestamp TIMESTAMPTZ DEFAULT NOW()
+            # Add surfer_points column if it doesn't exist (for existing databases)
+            try:
+                db.execute("ALTER TABLE users ADD COLUMN surfer_points INTEGER DEFAULT 0")
+            except:
+                pass  # Column already exists
+        else:
+            # Postgres DDL
+            db.execute(
+                """
+                CREATE TABLE IF NOT EXISTS ikigai_responses (
+                    id SERIAL PRIMARY KEY,
+                    love TEXT,
+                    needs TEXT,
+                    paid TEXT,
+                    good TEXT,
+                    passion TEXT,
+                    mission TEXT,
+                    vocation TEXT,
+                    profession TEXT,
+                    ikigai TEXT,
+                    impact TEXT,
+                    timestamp TIMESTAMPTZ DEFAULT NOW()
+                )
+                """
             )
-            """
-        )
-        db.execute(
-            """
-            CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                username TEXT UNIQUE NOT NULL,
-                hash TEXT NOT NULL,
-                surfer_points INTEGER DEFAULT 0
+            db.execute(
+                """
+                CREATE TABLE IF NOT EXISTS users (
+                    id SERIAL PRIMARY KEY,
+                    username TEXT UNIQUE NOT NULL,
+                    hash TEXT NOT NULL,
+                    surfer_points INTEGER DEFAULT 0
+                )
+                """
             )
-            """
-        )
-        # Add surfer_points column if it doesn't exist (for existing databases)
-        try:
-            db.execute("ALTER TABLE users ADD COLUMN surfer_points INTEGER DEFAULT 0")
-        except:
-            pass  # Column already exists
+            # Add surfer_points column if it doesn't exist (for existing databases)
+            try:
+                db.execute("ALTER TABLE users ADD COLUMN surfer_points INTEGER DEFAULT 0")
+            except:
+                pass  # Column already exists
+    except Exception as e:
+        print(f"⚠️  Error creating tables: {str(e)}")
+        print("   The app will still run but database operations may fail.")
 
 
 # Ensure tables exist on startup

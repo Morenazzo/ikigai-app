@@ -19,7 +19,10 @@
       "src": "/(.*)",
       "dest": "/api/index.py"
     }
-  ]
+  ],
+  "env": {
+    "VERCEL": "1"
+  }
 }
 
 
