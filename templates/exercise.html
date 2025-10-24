@@ -787,7 +787,17 @@ function collectCategoryData(category) {
 }
 
 function loadSavedData() {
-    const saved = localStorage.getItem('ikigaiProgress');
+    // First check for language-change progress (priority)
+    let saved = localStorage.getItem('ikigai_progress');
+    let isLanguageChange = false;
+    
+    if (saved) {
+        isLanguageChange = true;
+    } else {
+        // Otherwise load normal autosave
+        saved = localStorage.getItem('ikigaiProgress');
+    }
+    
     if (saved) {
         try {
             const data = JSON.parse(saved);
@@ -805,6 +815,21 @@ function loadSavedData() {
             
             if (data.impact && document.getElementById('impactInput')) {
                 document.getElementById('impactInput').value = data.impact;
+            }
+            
+            // If this was a language change, also restore step and timers
+            if (isLanguageChange && data.currentStep) {
+                currentStep = data.currentStep;
+                if (data.timers) {
+                    savedTimes = data.timers;
+                }
+                // Clean up the language-change data
+                localStorage.removeItem('ikigai_progress');
+                
+                // Navigate to the saved step after a short delay
+                setTimeout(() => {
+                    showStep(currentStep);
+                }, 100);
             }
         } catch (e) {
             console.log('Error loading saved data:', e);

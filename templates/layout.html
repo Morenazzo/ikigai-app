@@ -78,10 +78,40 @@
         <script>
         // Language switcher function
         function changeLanguage(lang) {
-            // Save language preference and reload
+            // Save current progress if on exercise page
+            if (window.location.pathname === '/exercise') {
+                // Save all current data before reloading
+                const exerciseData = {
+                    love: collectCategoryData('love'),
+                    good: collectCategoryData('good'),
+                    paid: collectCategoryData('paid'),
+                    needs: collectCategoryData('needs'),
+                    passion: collectCategoryData('passion'),
+                    mission: collectCategoryData('mission'),
+                    vocation: collectCategoryData('vocation'),
+                    profession: collectCategoryData('profession'),
+                    ikigai: collectCategoryData('ikigai'),
+                    impact: document.getElementById('impactInput') ? document.getElementById('impactInput').value : '',
+                    currentStep: currentStep,
+                    timers: savedTimes
+                };
+                localStorage.setItem('ikigai_progress', JSON.stringify(exerciseData));
+            }
+            
+            // Change language and reload
             const url = new URL(window.location);
             url.searchParams.set('lang', lang);
             window.location.href = url.toString();
+        }
+        
+        // Helper function to collect category data
+        function collectCategoryData(category) {
+            const inputs = document.querySelectorAll(`[data-category="${category}"]`);
+            const values = [];
+            inputs.forEach(input => {
+                if (input.value) values.push(input.value);
+            });
+            return values;
         }
         </script>
 
