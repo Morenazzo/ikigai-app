@@ -70,6 +70,18 @@ TRANSLATIONS = {
         'reveal_treasure': 'Reveal My Divine Treasure',
         'superpower_mission': 'Your Superpower Mission',
         'superpower_mission_desc': "Now that you've discovered your divine treasure, it's time to unleash it! How will you use your God-given SUPERPOWERS to positively impact more than a million lives in the coming years?",
+        'your_divine_treasure': 'Your Divine Treasure',
+        'your_divine_treasure_desc': 'Look at the diagram below—these are the pieces of your unique SUPERPOWER! Now, write 2-5 words that capture the essence of your God-given Ikigai. What treasure do you see emerging? 🎁',
+        'summary_answers': 'Summary of Your Answers',
+        'ai_suggestions': 'Get AI Suggestions',
+        'analyzing_ai': 'Analyzing with AI...',
+        'first_keyword': 'First keyword...',
+        'second_keyword': 'Second keyword...',
+        'third_keyword': 'Third keyword (optional)...',
+        'fourth_keyword': 'Fourth keyword (optional)...',
+        'fifth_keyword': 'Fifth keyword (optional)...',
+        'continue_to_impact': 'Continue to Impact',
+        'impact_placeholder': 'Describe your vision of impact... How will you use your Ikigai to transform lives? What legacy do you want to leave?',
     },
     'es': {
         # Exercise page
@@ -138,6 +150,18 @@ TRANSLATIONS = {
         'reveal_treasure': 'Revelar Mi Tesoro Divino',
         'superpower_mission': 'Tu Misión de Superpoder',
         'superpower_mission_desc': '¡Ahora que has descubierto tu tesoro divino, es hora de liberarlo! ¿Cómo usarás tus SUPERPODERES dados por Dios para impactar positivamente más de un millón de vidas en los próximos años?',
+        'your_divine_treasure': 'Tu Tesoro Divino',
+        'your_divine_treasure_desc': '¡Mira el diagrama a continuación, estas son las piezas de tu SUPERPODER único! Ahora, escribe 2-5 palabras que capturen la esencia de tu Ikigai dado por Dios. ¿Qué tesoro ves emerger? 🎁',
+        'summary_answers': 'Resumen de tus Respuestas',
+        'ai_suggestions': 'Obtener Sugerencias con IA',
+        'analyzing_ai': 'Analizando con IA...',
+        'first_keyword': 'Primera palabra clave...',
+        'second_keyword': 'Segunda palabra clave...',
+        'third_keyword': 'Tercera palabra clave (opcional)...',
+        'fourth_keyword': 'Cuarta palabra clave (opcional)...',
+        'fifth_keyword': 'Quinta palabra clave (opcional)...',
+        'continue_to_impact': 'Continuar a Impacto',
+        'impact_placeholder': 'Describe tu visión de impacto... ¿Cómo usarás tu Ikigai para transformar vidas? ¿Qué legado quieres dejar?',
     }
 }
 
