@@ -3,12 +3,21 @@
 import { useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
-import { useLanguage } from '@/contexts/LanguageContext';
+
+// Disable static rendering for this page
+export const dynamic = 'force-dynamic';
 
 export default function StartExercise() {
   const { isLoaded, isSignedIn, user } = useUser();
-  const { language } = useLanguage();
   const router = useRouter();
+  
+  // Get language from localStorage or default to 'es'
+  const getLanguage = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('ikigai-language') || 'es';
+    }
+    return 'es';
+  };
 
   useEffect(() => {
     if (isLoaded) {
@@ -17,11 +26,12 @@ export default function StartExercise() {
         router.push('/sign-up');
       } else {
         // Usuario autenticado, redirigir a Flask con idioma
+        const language = getLanguage();
         const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
         window.location.href = `${flaskUrl}/exercise?lang=${language}`;
       }
     }
-  }, [isLoaded, isSignedIn, router, language]);
+  }, [isLoaded, isSignedIn, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-dark via-teal-dark to-blue">
@@ -48,4 +58,3 @@ export default function StartExercise() {
     </div>
   );
 }
-
