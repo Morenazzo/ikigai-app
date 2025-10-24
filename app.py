@@ -134,6 +134,31 @@ def ensure_tables() -> None:
                 db.execute("ALTER TABLE users ADD COLUMN surfer_points INTEGER DEFAULT 0")
             except:
                 pass  # Column already exists
+            
+            # Add self-evaluation columns for ratings (1-10) and improvement plans
+            evaluation_columns = [
+                "love_rating INTEGER",
+                "love_improvement TEXT",
+                "good_rating INTEGER",
+                "good_improvement TEXT",
+                "paid_rating INTEGER",
+                "paid_improvement TEXT",
+                "needs_rating INTEGER",
+                "needs_improvement TEXT",
+                "passion_rating INTEGER",
+                "passion_improvement TEXT",
+                "mission_rating INTEGER",
+                "mission_improvement TEXT",
+                "vocation_rating INTEGER",
+                "vocation_improvement TEXT",
+                "profession_rating INTEGER",
+                "profession_improvement TEXT"
+            ]
+            for column in evaluation_columns:
+                try:
+                    db.execute(f"ALTER TABLE ikigai_responses ADD COLUMN {column}")
+                except:
+                    pass  # Column already exists
         else:
             # Postgres DDL
             db.execute(
@@ -169,6 +194,31 @@ def ensure_tables() -> None:
                 db.execute("ALTER TABLE users ADD COLUMN surfer_points INTEGER DEFAULT 0")
             except:
                 pass  # Column already exists
+            
+            # Add self-evaluation columns for ratings (1-10) and improvement plans
+            evaluation_columns = [
+                "love_rating INTEGER",
+                "love_improvement TEXT",
+                "good_rating INTEGER",
+                "good_improvement TEXT",
+                "paid_rating INTEGER",
+                "paid_improvement TEXT",
+                "needs_rating INTEGER",
+                "needs_improvement TEXT",
+                "passion_rating INTEGER",
+                "passion_improvement TEXT",
+                "mission_rating INTEGER",
+                "mission_improvement TEXT",
+                "vocation_rating INTEGER",
+                "vocation_improvement TEXT",
+                "profession_rating INTEGER",
+                "profession_improvement TEXT"
+            ]
+            for column in evaluation_columns:
+                try:
+                    db.execute(f"ALTER TABLE ikigai_responses ADD COLUMN {column}")
+                except:
+                    pass  # Column already exists
     except Exception as e:
         print(f"⚠️  Error creating tables: {str(e)}")
         print("   The app will still run but database operations may fail.")
@@ -343,6 +393,47 @@ def results():
         "SELECT * FROM ikigai_responses ORDER BY timestamp DESC"
     )
     return render_template("results.html", responses=responses)
+
+
+@app.route("/save_evaluation", methods=["POST"])
+def save_evaluation():
+    """Save user's self-evaluation ratings and improvement plans"""
+    try:
+        response_id = request.form.get("response_id")
+        if not response_id:
+            return jsonify({"success": False, "error": "No response ID provided"}), 400
+        
+        # Get all ratings and improvements from the form
+        updates = []
+        values = []
+        
+        categories = ['love', 'good', 'paid', 'needs', 'passion', 'mission', 'vocation', 'profession']
+        
+        for category in categories:
+            rating = request.form.get(f"{category}_rating")
+            improvement = request.form.get(f"{category}_improvement", "").strip()
+            
+            if rating:
+                updates.append(f"{category}_rating = ?")
+                values.append(int(rating))
+            
+            if improvement:
+                updates.append(f"{category}_improvement = ?")
+                values.append(improvement)
+        
+        # Update the database
+        if updates:
+            values.append(response_id)
+            query = f"UPDATE ikigai_responses SET {', '.join(updates)} WHERE id = ?"
+            db.execute(query, *values)
+            
+            return jsonify({"success": True, "message": "Evaluación guardada correctamente"})
+        else:
+            return jsonify({"success": False, "error": "No data to save"}), 400
+            
+    except Exception as e:
+        print(f"Error saving evaluation: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route("/dashboard")

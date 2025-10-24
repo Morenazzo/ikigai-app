@@ -342,6 +342,232 @@
             </div>
         </div>
         
+        <!-- Self-Evaluation Section -->
+        <div style="margin: 60px 0 40px; padding: 50px; background: linear-gradient(135deg, rgba(11, 183, 183, 0.05) 0%, rgba(237, 74, 109, 0.05) 100%); border-radius: 20px; border: 3px solid var(--turquoise);">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <div style="font-size: 48px; margin-bottom: 15px;">📊✨</div>
+                <h3 style="color: var(--navy); font-size: 32px; margin-bottom: 15px; font-weight: bold;">Auto-Evaluación y Plan de Mejora</h3>
+                <p style="color: var(--teal-dark); font-size: 18px; max-width: 800px; margin: 0 auto; line-height: 1.6;">
+                    Ahora que conoces tu Ikigai, es momento de <strong style="color: var(--pink);">evaluar y planear</strong>.<br>
+                    Califica cada área del <strong>1 al 10</strong> y define <strong>qué puedes hacer para mejorar</strong>.
+                </p>
+            </div>
+            
+            <form id="evaluationForm" onsubmit="saveEvaluation(event)">
+                <input type="hidden" name="response_id" value="{{ row.id }}">
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px;">
+                    <!-- Love Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--pink); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--pink); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">❤️</span>
+                            What You Love
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="love_rating" min="1" max="10" value="{{ row.love_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--pink);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--pink); margin-top: 5px;">{{ row.love_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="love_improvement" rows="3" 
+                                      placeholder="Ej: Dedicar 2 horas semanales a mis hobbies favoritos..."
+                                      style="width: 100%; padding: 12px; border: 2px solid var(--pink-light); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.love_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Good At Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--sky-blue); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--sky-blue); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">⭐</span>
+                            What You're Good At
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="good_rating" min="1" max="10" value="{{ row.good_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--sky-blue);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--sky-blue); margin-top: 5px;">{{ row.good_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="good_improvement" rows="3" 
+                                      placeholder="Ej: Tomar un curso avanzado en mi área de expertise..."
+                                      style="width: 100%; padding: 12px; border: 2px solid rgba(0, 159, 213, 0.3); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.good_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Paid For Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--turquoise); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--turquoise); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">💰</span>
+                            What You Can Be Paid For
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="paid_rating" min="1" max="10" value="{{ row.paid_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--turquoise);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--turquoise); margin-top: 5px;">{{ row.paid_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="paid_improvement" rows="3" 
+                                      placeholder="Ej: Crear un portfolio profesional y buscar clientes..."
+                                      style="width: 100%; padding: 12px; border: 2px solid rgba(11, 183, 183, 0.3); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.paid_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- World Needs Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--purple); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--purple); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">🌍</span>
+                            What The World Needs
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="needs_rating" min="1" max="10" value="{{ row.needs_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--purple);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--purple); margin-top: 5px;">{{ row.needs_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="needs_improvement" rows="3" 
+                                      placeholder="Ej: Investigar organizaciones que trabajan en este problema..."
+                                      style="width: 100%; padding: 12px; border: 2px solid rgba(157, 128, 185, 0.3); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.needs_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Passion Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--pink-light); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--pink); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">💖</span>
+                            Your Passion
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="passion_rating" min="1" max="10" value="{{ row.passion_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--pink);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--pink); margin-top: 5px;">{{ row.passion_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="passion_improvement" rows="3" 
+                                      placeholder="Ej: Dedicar tiempo diario a combinar lo que amo con mis talentos..."
+                                      style="width: 100%; padding: 12px; border: 2px solid var(--pink-light); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.passion_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Mission Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--purple); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--purple); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">🎯</span>
+                            Your Mission
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="mission_rating" min="1" max="10" value="{{ row.mission_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--purple);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--purple); margin-top: 5px;">{{ row.mission_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="mission_improvement" rows="3" 
+                                      placeholder="Ej: Definir proyectos específicos que combinen mis pasiones con las necesidades del mundo..."
+                                      style="width: 100%; padding: 12px; border: 2px solid rgba(157, 128, 185, 0.3); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.mission_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Vocation Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--sky-blue); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--sky-blue); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">🌟</span>
+                            Your Vocation
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="vocation_rating" min="1" max="10" value="{{ row.vocation_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--sky-blue);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--sky-blue); margin-top: 5px;">{{ row.vocation_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="vocation_improvement" rows="3" 
+                                      placeholder="Ej: Buscar oportunidades donde pueda usar mis habilidades para resolver problemas reales..."
+                                      style="width: 100%; padding: 12px; border: 2px solid rgba(0, 159, 213, 0.3); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.vocation_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- Profession Evaluation -->
+                    <div style="background: white; padding: 25px; border-radius: 15px; border-left: 5px solid var(--turquoise); box-shadow: 0 2px 15px rgba(0,0,0,0.08);">
+                        <h4 style="color: var(--turquoise); margin-bottom: 15px; display: flex; align-items: center; font-size: 18px;">
+                            <span style="font-size: 28px; margin-right: 12px;">💼</span>
+                            Your Profession
+                        </h4>
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Cómo calificas tu nivel actual? (1-10)
+                            </label>
+                            <input type="range" name="profession_rating" min="1" max="10" value="{{ row.profession_rating or 5 }}" 
+                                   oninput="this.nextElementSibling.textContent = this.value"
+                                   style="width: 100%; accent-color: var(--turquoise);">
+                            <div style="text-align: center; font-size: 24px; font-weight: bold; color: var(--turquoise); margin-top: 5px;">{{ row.profession_rating or 5 }}</div>
+                        </div>
+                        <div>
+                            <label style="display: block; color: var(--navy); font-weight: 600; margin-bottom: 10px;">
+                                ¿Qué puedes hacer para mejorar?
+                            </label>
+                            <textarea name="profession_improvement" rows="3" 
+                                      placeholder="Ej: Desarrollar un plan de carrera que monetice mis habilidades..."
+                                      style="width: 100%; padding: 12px; border: 2px solid rgba(11, 183, 183, 0.3); border-radius: 10px; font-size: 14px; font-family: inherit; resize: vertical;">{{ row.profession_improvement or '' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div style="text-align: center; margin-top: 40px;">
+                    <button type="submit" class="btn btn-primary" style="font-size: 20px; padding: 15px 60px; background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); border: none; border-radius: 50px; box-shadow: 0 8px 25px rgba(11, 183, 183, 0.4); transition: all 0.3s;">
+                        💾 Guardar Mi Evaluación y Plan de Mejora
+                    </button>
+                    <div id="saveMessage" style="margin-top: 15px; font-weight: bold; display: none;"></div>
+                </div>
+            </form>
+        </div>
+        
         <div style="text-align: center; margin-top: 50px;">
             <a href="/exercise" class="btn btn-primary" style="text-decoration: none; display: inline-block;">
                 🔄 Start New Journey
@@ -693,6 +919,52 @@ async function downloadPDF() {
     } catch (error) {
         console.error('Error generating PDF:', error);
         alert('Hubo un error al generar el PDF. Por favor intenta de nuevo.');
+    }
+}
+
+// Save evaluation function
+async function saveEvaluation(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    const saveMessage = document.getElementById('saveMessage');
+    const submitButton = form.querySelector('button[type="submit"]');
+    
+    // Disable button and show loading
+    submitButton.disabled = true;
+    submitButton.textContent = '⏳ Guardando...';
+    saveMessage.style.display = 'none';
+    
+    try {
+        const response = await fetch('/save_evaluation', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            saveMessage.style.color = 'var(--turquoise)';
+            saveMessage.textContent = '✅ ' + result.message;
+            saveMessage.style.display = 'block';
+            
+            // Re-enable button after 2 seconds
+            setTimeout(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = '💾 Guardar Mi Evaluación y Plan de Mejora';
+            }, 2000);
+        } else {
+            throw new Error(result.error || 'Error desconocido');
+        }
+    } catch (error) {
+        console.error('Error saving evaluation:', error);
+        saveMessage.style.color = 'var(--pink)';
+        saveMessage.textContent = '❌ Error al guardar. Por favor intenta de nuevo.';
+        saveMessage.style.display = 'block';
+        
+        submitButton.disabled = false;
+        submitButton.textContent = '💾 Guardar Mi Evaluación y Plan de Mejora';
     }
 }
 </script>
