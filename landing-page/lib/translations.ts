@@ -9,7 +9,7 @@ export const translations = {
         line2: "SUPERPODER",
         line3: "Divino",
       },
-      subtitle: "生き甲斐 (Ikigai) - Tu propósito dado por Dios",
+      subtitle: "生き甲斐 (Ikigai) - Tu Razón de Ser",
       description: "Descubre el tesoro único que Dios puso dentro de ti para impactar millones de vidas",
       ctaPrimary: "Desbloquea tus Superpoderes",
       ctaSecondary: "¿Cómo funciona?",
@@ -24,7 +24,7 @@ export const translations = {
     },
     // Features Section
     features: {
-      title: "¿Qué es Ikigai?",
+      title: "¿Qué es Tu Razón de Ser?",
       subtitle: "La intersección de tus dones divinos",
       items: [
         {
@@ -47,7 +47,7 @@ export const translations = {
       mapTitle: "Tu Mapa del Tesoro Personal",
       mapDescription: "Ikigai (生き甲斐) combina \"iki\" (vida) y \"gai\" (valor). Es el tesoro que Dios incrustó en tu ADN—tu contribución única al mundo.",
       convergence: "✨ Donde estos cuatro convergen,",
-      findIkigai: "encontrarás tu Ikigai—",
+      findIkigai: "encontrarás Tu Razón de Ser—",
       purpose: "tu propósito dado por Dios para impactar millones de vidas.",
     },
     // How It Works
@@ -68,7 +68,7 @@ export const translations = {
     },
     // Pillars
     pillars: {
-      title: "Los Cuatro Pilares del Ikigai",
+      title: "Los Cuatro Pilares de Tu Razón de Ser",
       subtitle: "Cada intersección revela una parte esencial de tu propósito",
       items: [
         { title: "Pasión", subtitle: "Lo que amas + En lo que eres bueno", description: "Cuando combinas lo que amas con tus talentos naturales, nace tu pasión verdadera." },
@@ -76,7 +76,7 @@ export const translations = {
         { title: "Vocación", subtitle: "Lo que el mundo necesita + Por lo que te pagan", description: "Tu vocación conecta el impacto que quieres crear con valor económico real." },
         { title: "Profesión", subtitle: "En lo que eres bueno + Por lo que te pagan", description: "Tu profesión es donde tus habilidades se convierten en valor monetizable." },
       ],
-      centerTitle: "Tu Ikigai Está en el Centro",
+      centerTitle: "Tu Razón de Ser Está en el Centro",
       centerDescription: "Cuando descubres la intersección perfecta de estos cuatro pilares, encuentras tu IKIGAI—tu propósito único para transformar el mundo.",
       quote: "\"Porque somos la obra maestra de Dios. Él nos creó de nuevo en Cristo Jesús, para que hagamos las cosas buenas que preparó para nosotros tiempo atrás.\"",
       quoteSource: "- Efesios 2:10",
@@ -89,20 +89,20 @@ export const translations = {
       description: "Nuestro viaje guiado te ayudará a desbloquear el cofre del tesoro que Dios puso dentro de ti. A través de reflexiones cronometradas, descubrirás tus SUPERPODERES únicos y cómo usarlos para impactar más de un millón de vidas.",
       benefits: [
         { title: "Proceso Guiado", description: "9 pasos interactivos con timers" },
-        { title: "Resultados Inmediatos", description: "Descubre tu Ikigai en 25 min" },
+        { title: "Resultados Inmediatos", description: "Descubre Tu Razón de Ser en 25 min" },
         { title: "Guardado Automático", description: "Todas tus respuestas se guardan" },
         { title: "Diseño Hermoso", description: "Experiencia visual premium" },
       ],
       button: "Comenzar Mi Viaje Ahora",
       disclaimer: "Sin registro • Completamente gratis • Resultados instantáneos",
-      badge: "Gana 200 Puntos Surfer al completar tu Ikigai",
+      badge: "Gana 200 Puntos Surfer al completar Tu Razón de Ser",
     },
     // Footer
     footer: {
       brandDescription: "Ayudando a las personas a descubrir su propósito divino y desbloquear sus superpoderes únicos.",
       quickLinks: "Navegación Rápida",
       links: {
-        whatIsIkigai: "¿Qué es Ikigai?",
+        whatIsIkigai: "¿Qué es Tu Razón de Ser?",
         howItWorks: "Cómo Funciona",
         startNow: "Comenzar Ahora",
         impact: "Impacto Comunitario",
@@ -110,7 +110,7 @@ export const translations = {
       connect: "Conéctate",
       contactText: "¿Preguntas o comentarios sobre este proyecto?",
       copyright: "© 2025 Surfing Digital. Hecho con ❤️ para aquellos que buscan su propósito.",
-      findYourIkigai: "生き甲斐を見つけよう (Encuentra tu Ikigai)",
+      findYourIkigai: "生き甲斐を見つけよう (Encuentra Tu Razón de Ser)",
     },
   },
   en: {
