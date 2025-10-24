@@ -15,6 +15,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from openai import OpenAI
 
 from helpers import apology, login_required
+from translations import get_translation, get_user_language, TRANSLATIONS
 
 # Configure application
 app = Flask(__name__)
@@ -34,6 +35,18 @@ if os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
 else:
     # In local development, use filesystem sessions
     Session(app)
+
+
+# Make translations available in all templates
+@app.context_processor
+def inject_translations():
+    """Make translation function and language available to all templates"""
+    lang = session.get('language', 'es')
+    return {
+        't': lambda key, **kwargs: get_translation(key, lang, **kwargs),
+        'lang': lang,
+        'translations': TRANSLATIONS.get(lang, TRANSLATIONS['es'])
+    }
 
 # Initialize OpenAI client
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -194,7 +207,15 @@ def about():
 
 @app.route("/exercise", methods=["GET", "POST"])
 def exercise():
-    """Exercise to fill you ikigai"""
+    """Exercise to fill your ikigai"""
+    # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
+    lang_param = request.args.get('lang')
+    if lang_param in ['es', 'en']:
+        session['language'] = lang_param
+    elif 'language' not in session:
+        # Default to Spanish if no language is set
+        session['language'] = 'es'
+    
     return render_template("exercise.html")
 
 @app.route("/submit_exercise", methods=["POST"])

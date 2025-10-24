@@ -3,9 +3,11 @@
 import { useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function StartExercise() {
   const { isLoaded, isSignedIn, user } = useUser();
+  const { language } = useLanguage();
   const router = useRouter();
 
   useEffect(() => {
@@ -14,12 +16,12 @@ export default function StartExercise() {
         // Si no está autenticado, redirigir a sign-up
         router.push('/sign-up');
       } else {
-        // Usuario autenticado, redirigir a Flask
+        // Usuario autenticado, redirigir a Flask con idioma
         const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
-        window.location.href = `${flaskUrl}/exercise`;
+        window.location.href = `${flaskUrl}/exercise?lang=${language}`;
       }
     }
-  }, [isLoaded, isSignedIn, router]);
+  }, [isLoaded, isSignedIn, router, language]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-dark via-teal-dark to-blue">

@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 export default function Hero() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   
@@ -13,10 +13,10 @@ export default function Hero() {
     // Si está cargando, esperar
     if (!isLoaded) return;
     
-    // Si ya está autenticado, ir directo al ejercicio
+    // Si ya está autenticado, ir directo al ejercicio con el idioma
     if (isSignedIn) {
       const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
-      window.location.href = `${flaskUrl}/exercise`;
+      window.location.href = `${flaskUrl}/exercise?lang=${language}`;
     } else {
       // Si no está autenticado, ir a la página intermedia que redirige a sign-up
       router.push('/start-exercise');
@@ -103,8 +103,8 @@ export default function Hero() {
         </div>
 
         {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <svg className="w-6 h-6 text-navy-dark" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <svg className="w-8 h-8 text-navy-dark" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
             <path d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
           </svg>
         </div>
