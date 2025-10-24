@@ -426,3 +426,96 @@ textarea.input-field:focus {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Enhanced Mobile Responsive Styles */
+@media (max-width: 767px) {
+    /* Navbar Mobile */
+    nav .navbar-brand {
+        font-size: 1.2rem !important;
+    }
+    
+    nav .nav-link {
+        padding: 0.75rem 1rem !important;
+        font-size: 1rem;
+    }
+    
+    nav .navbar-collapse {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* Exercise Container Mobile */
+    .exercise-container {
+        padding: 15px !important;
+        margin: 0 !important;
+    }
+    
+    .step-title {
+        font-size: 24px !important;
+    }
+    
+    .step-description {
+        font-size: 14px !important;
+    }
+    
+    .input-item {
+        margin-bottom: 12px !important;
+    }
+    
+    .input-field {
+        font-size: 14px !important;
+        padding: 10px !important;
+    }
+    
+    .btn {
+        font-size: 14px !important;
+        padding: 10px 20px !important;
+    }
+    
+    /* Hero Message Mobile */
+    #heroMessage h1 {
+        font-size: 24px !important;
+    }
+    
+    #heroMessage p {
+        font-size: 14px !important;
+    }
+    
+    /* Timer Mobile */
+    .timer-circle {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    .timer-text {
+        font-size: 20px !important;
+    }
+    
+    /* Progress Bar Mobile */
+    .progress-bar-container {
+        height: 8px !important;
+    }
+    
+    /* Step Indicator Mobile */
+    .step-indicator {
+        font-size: 14px !important;
+    }
+}
+
+/* Tablet Responsive */
+@media (min-width: 768px) and (max-width: 991px) {
+    nav .navbar-brand {
+        font-size: 1.5rem !important;
+    }
+    
+    .exercise-container {
+        padding: 25px !important;
+    }
+    
+    .step-title {
+        font-size: 28px !important;
+    }
+}

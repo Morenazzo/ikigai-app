@@ -55,6 +55,15 @@ TRANSLATIONS = {
         'intersection_item': 'An intersection item...',
         'your_purpose': 'Your divine purpose...',
         'your_vision': 'Your impact vision...',
+        
+        # Navigation Menu
+        'nav_about': 'About',
+        'nav_exercise': 'Exercise',
+        'nav_dashboard': 'Dashboard',
+        'nav_results': 'Results',
+        'nav_impact': 'Impact',
+        'nav_share': 'Share',
+        'nav_points': 'Points',
     },
     'es': {
         # Exercise page
@@ -108,6 +117,15 @@ TRANSLATIONS = {
         'intersection_item': 'Un elemento de intersección...',
         'your_purpose': 'Tu propósito divino...',
         'your_vision': 'Tu visión de impacto...',
+        
+        # Navigation Menu
+        'nav_about': 'Acerca de',
+        'nav_exercise': 'Ejercicio',
+        'nav_dashboard': 'Panel',
+        'nav_results': 'Resultados',
+        'nav_impact': 'Impacto',
+        'nav_share': 'Compartir',
+        'nav_points': 'Puntos',
     }
 }
 
