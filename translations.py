@@ -83,6 +83,11 @@ TRANSLATIONS = {
         'continue_to_impact': 'Continue to Impact',
         'impact_placeholder': 'Describe your vision of impact... How will you use your Ikigai to transform lives? What legacy do you want to leave?',
         'no_answers_yet': 'No answers yet',
+        'evaluate_ikigai': 'Evaluate Your Ikigai',
+        'evaluate_ikigai_desc': 'Now that you\'ve discovered your Ikigai, let\'s evaluate each keyword. Rate how well you embody each word today (1-10) and define what you can do to strengthen it.',
+        'rate_keyword': 'How would you rate yourself today?',
+        'improve_keyword': 'What can you do to improve this aspect?',
+        'improvement_placeholder': 'Ex: Practice this skill daily, take a course, seek mentorship...',
     },
     'es': {
         # Exercise page
@@ -164,6 +169,11 @@ TRANSLATIONS = {
         'continue_to_impact': 'Continuar a Impacto',
         'impact_placeholder': 'Describe tu visión de impacto... ¿Cómo usarás tu Ikigai para transformar vidas? ¿Qué legado quieres dejar?',
         'no_answers_yet': 'Sin respuestas aún',
+        'evaluate_ikigai': 'Evalúa tu Ikigai',
+        'evaluate_ikigai_desc': 'Ahora que has descubierto tu Ikigai, evaluemos cada palabra clave. Califica qué tan bien encarnas cada palabra hoy (1-10) y define qué puedes hacer para fortalecerla.',
+        'rate_keyword': '¿Cómo te calificas hoy?',
+        'improve_keyword': '¿Qué puedes hacer para mejorar este aspecto?',
+        'improvement_placeholder': 'Ej: Practicar esta habilidad diariamente, tomar un curso, buscar mentoría...',
     }
 }
 

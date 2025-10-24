@@ -283,6 +283,7 @@ def submit_exercise():
     profession = request.form.get("profession", "[]")
     ikigai = request.form.get("ikigai", "[]")
     impact = request.form.get("impact", "")
+    ikigai_evaluations = request.form.get("ikigai_evaluations", "[]")
 
     # Convert arrays to comma-separated strings for storage
     try:
@@ -317,15 +318,20 @@ def submit_exercise():
         ikigai_str = ikigai
 
     try:
-        # Add impact column if it doesn't exist
+        # Add columns if they don't exist
         try:
             db.execute("ALTER TABLE ikigai_responses ADD COLUMN impact TEXT")
         except:
             pass  # Column already exists
         
+        try:
+            db.execute("ALTER TABLE ikigai_responses ADD COLUMN ikigai_evaluations TEXT")
+        except:
+            pass  # Column already exists
+        
         # Insert data
         db.execute(
-            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, ikigai, impact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, ikigai, impact, ikigai_evaluations) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             love_str,
             needs_str,
             paid_str,
@@ -335,6 +341,7 @@ def submit_exercise():
             vocation_str,
             ikigai_str,
             impact,
+            ikigai_evaluations,
         )
         
         # Award Surfer Points! 🏄‍♂️
