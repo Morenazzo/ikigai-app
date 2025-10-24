@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 import uuid
 import json
 
+# Load .env FIRST (before importing other modules)
+load_dotenv()
+
 # Use custom SQL wrapper for better serverless compatibility
 from db_helper import SQL
 
@@ -31,9 +34,6 @@ if os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
 else:
     # In local development, use filesystem sessions
     Session(app)
-
-# Load .env (Neon credentials and OpenAI key)
-load_dotenv()
 
 # Initialize OpenAI client
 openai_api_key = os.getenv("OPENAI_API_KEY")
