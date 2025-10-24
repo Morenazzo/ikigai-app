@@ -143,7 +143,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(2)" id="pauseBtn2">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -203,7 +203,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(3)" id="pauseBtn3">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -263,7 +263,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(4)" id="pauseBtn4">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -325,7 +325,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(5)" id="pauseBtn5">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -387,7 +387,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(6)" id="pauseBtn6">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -449,7 +449,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(7)" id="pauseBtn7">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -511,7 +511,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(8)" id="pauseBtn8">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">{{ t('continue') }} →</button>
         </div>
@@ -666,7 +666,7 @@
         </div>
         
         <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+            <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
             <button class="btn btn-secondary" onclick="pauseTimer(9)" id="pauseBtn9">⏸ {{ t('pause') }}</button>
             <button class="btn btn-primary" onclick="nextStep()">Continue to Impact →</button>
         </div>
@@ -679,8 +679,8 @@
                 <div class="timer-text" id="timer10">5:00</div>
             </div>
         </div>
-        <h2 class="step-title">🌍 Your Superpower Mission 🌍</h2>
-        <p class="step-description">Now that you've discovered your divine treasure, it's time to unleash it! How will you use your God-given SUPERPOWERS to positively impact more than a million lives in the coming years? 🦸‍♂️✨</p>
+        <h2 class="step-title">🌍 {{ t('superpower_mission') }} 🌍</h2>
+        <p class="step-description">{{ t('superpower_mission_desc') }} 🦸‍♂️✨</p>
         
         <div class="input-group" style="max-width: 800px; margin: 0 auto;">
             <div style="margin-bottom: 20px;">
@@ -695,10 +695,10 @@
         </div>
         
             <div class="button-group" style="display: flex; gap: 15px; justify-content: center;">
-                <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← Back</button>
+                <button class="btn btn-secondary" onclick="goBackStep()" style="background: var(--light-gray); color: var(--navy);">← {{ t('back') }}</button>
                 <button class="btn btn-secondary" onclick="pauseTimer(10)" id="pauseBtn10">⏸ {{ t('pause') }}</button>
                 <button class="btn btn-primary btn-lg" onclick="submitExercise()" style="font-size: 20px; padding: 15px 50px; box-shadow: 0 10px 30px rgba(11, 183, 183, 0.5); animation: pulse 2s infinite;">
-                    🎁 Reveal My Divine Treasure
+                    🎁 {{ t('reveal_treasure') }}
                 </button>
             </div>
     </div>

@@ -64,6 +64,12 @@ TRANSLATIONS = {
         'nav_impact': 'Impact',
         'nav_share': 'Share',
         'nav_points': 'Points',
+        
+        # Additional UI elements
+        'back': 'Back',
+        'reveal_treasure': 'Reveal My Divine Treasure',
+        'superpower_mission': 'Your Superpower Mission',
+        'superpower_mission_desc': "Now that you've discovered your divine treasure, it's time to unleash it! How will you use your God-given SUPERPOWERS to positively impact more than a million lives in the coming years?",
     },
     'es': {
         # Exercise page
@@ -126,6 +132,12 @@ TRANSLATIONS = {
         'nav_impact': 'Impacto',
         'nav_share': 'Compartir',
         'nav_points': 'Puntos',
+        
+        # Additional UI elements
+        'back': 'Atrás',
+        'reveal_treasure': 'Revelar Mi Tesoro Divino',
+        'superpower_mission': 'Tu Misión de Superpoder',
+        'superpower_mission_desc': '¡Ahora que has descubierto tu tesoro divino, es hora de liberarlo! ¿Cómo usarás tus SUPERPODERES dados por Dios para impactar positivamente más de un millón de vidas en los próximos años?',
     }
 }
 
