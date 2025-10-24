@@ -82,6 +82,7 @@ TRANSLATIONS = {
         'fifth_keyword': 'Fifth keyword (optional)...',
         'continue_to_impact': 'Continue to Impact',
         'impact_placeholder': 'Describe your vision of impact... How will you use your Ikigai to transform lives? What legacy do you want to leave?',
+        'no_answers_yet': 'No answers yet',
     },
     'es': {
         # Exercise page
@@ -162,6 +163,7 @@ TRANSLATIONS = {
         'fifth_keyword': 'Quinta palabra clave (opcional)...',
         'continue_to_impact': 'Continuar a Impacto',
         'impact_placeholder': 'Describe tu visión de impacto... ¿Cómo usarás tu Ikigai para transformar vidas? ¿Qué legado quieres dejar?',
+        'no_answers_yet': 'Sin respuestas aún',
     }
 }
 

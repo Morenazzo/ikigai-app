@@ -726,7 +726,8 @@ const translations = {
     pause: "{{ t('pause') }}",
     continue: "{{ t('continue') }}",
     step_of: "{{ t('step_of', current='__CURRENT__', total='__TOTAL__') }}".replace('__CURRENT__', '{current}').replace('__TOTAL__', '{total}'),
-    saved: "{{ t('saved') }}"
+    saved: "{{ t('saved') }}",
+    no_answers_yet: "{{ t('no_answers_yet') }}"
 };
 
 let currentStep = 1;
@@ -828,7 +829,18 @@ function loadSavedData() {
                 
                 // Navigate to the saved step after a short delay
                 setTimeout(() => {
-                    showStep(currentStep);
+                    // Hide step 1 and show the saved step
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById(`step${currentStep}`).classList.add('active');
+                    
+                    // Update progress bar
+                    updateProgress();
+                    
+                    // Show the start button or continue with the step
+                    const existingStart = document.getElementById(`startContainer${currentStep}`);
+                    if (!existingStart) {
+                        showInstructions(currentStep);
+                    }
                 }, 100);
             }
         } catch (e) {
@@ -959,7 +971,7 @@ function showPreviousAnswers(category, targetElementId) {
         if (values.length > 0) {
             targetElement.innerHTML = values.map((val, idx) => `<div style="margin-bottom: 5px;"><strong>${idx + 1}.</strong> ${val}</div>`).join('');
         } else {
-            targetElement.innerHTML = '<em style="opacity: 0.6;">No answers yet</em>';
+            targetElement.innerHTML = `<em style="opacity: 0.6;">${translations.no_answers_yet}</em>`;
         }
     }
 }
