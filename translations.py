@@ -88,6 +88,23 @@ TRANSLATIONS = {
         'rate_keyword': 'How would you rate yourself today?',
         'improve_keyword': 'What can you do to improve this aspect?',
         'improvement_placeholder': 'Ex: Practice this skill daily, take a course, seek mentorship...',
+        # Results page
+        'results_title': 'Your Divine Treasure Revealed',
+        'impact_vision_title': 'Your Impact Vision',
+        'the_intersections': 'The Intersections',
+        'download_pdf': 'Download PDF',
+        'ikigai_keyword_evaluations': 'Ikigai Keyword Evaluations',
+        'rating': 'Rating',
+        'improvement_plan': 'Improvement plan',
+        'not_filled': 'Not filled',
+        'start_new_journey': 'Start New Journey',
+        'begin_exercise': 'Begin Exercise ✨',
+        'complete_ikigai_map': 'Your Complete Ikigai Map',
+        'visual_representation': 'The visual representation of your divine treasure',
+        'ai_followup_plan': 'AI Follow-up and Accountability Plan',
+        'generate_plan': 'Generate Plan with AI',
+        'plan_loading': 'Generating your plan...',
+        'self_eval_title': 'Self‑Evaluation and Improvement Plan'
     },
     'es': {
         # Exercise page
@@ -174,6 +191,23 @@ TRANSLATIONS = {
         'rate_keyword': '¿Cómo te calificas hoy?',
         'improve_keyword': '¿Qué puedes hacer para mejorar este aspecto?',
         'improvement_placeholder': 'Ej: Practicar esta habilidad diariamente, tomar un curso, buscar mentoría...',
+        # Results page
+        'results_title': 'Tu Tesoro Divino Revelado',
+        'impact_vision_title': 'Tu Visión de Impacto',
+        'the_intersections': 'Las Intersecciones',
+        'download_pdf': 'Descargar PDF',
+        'ikigai_keyword_evaluations': 'Evaluación de Palabras Clave del Ikigai',
+        'rating': 'Calificación',
+        'improvement_plan': 'Plan de mejora',
+        'not_filled': 'Sin completar',
+        'start_new_journey': 'Iniciar Nuevo Camino',
+        'begin_exercise': 'Comenzar Ejercicio ✨',
+        'complete_ikigai_map': 'Tu Mapa Completo de Ikigai',
+        'visual_representation': 'La representación visual de tu tesoro divino',
+        'ai_followup_plan': 'Plan de Seguimiento y Accountability con IA',
+        'generate_plan': 'Crear Plan con IA',
+        'plan_loading': 'Generando tu plan...',
+        'self_eval_title': 'Auto‑Evaluación y Plan de Mejora'
     }
 }
 

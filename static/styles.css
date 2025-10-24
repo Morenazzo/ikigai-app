@@ -486,12 +486,12 @@ textarea.input-field:focus {
     
     /* Timer Mobile */
     .timer-circle {
-        width: 80px !important;
-        height: 80px !important;
+        width: 96px !important;
+        height: 96px !important;
     }
     
     .timer-text {
-        font-size: 20px !important;
+        font-size: 22px !important;
     }
     
     /* Progress Bar Mobile */
@@ -502,6 +502,36 @@ textarea.input-field:focus {
     /* Step Indicator Mobile */
     .step-indicator {
         font-size: 14px !important;
+    }
+}
+
+/* Ikigai Diagram Mobile Refinements */
+@media (max-width: 767px) {
+    #ikigaiDiagram {
+        padding: 16px !important;
+    }
+    .ikigai-map-inner {
+        max-width: 320px !important;
+    }
+    .ikigai-circle {
+        width: 150px !important;
+        height: 150px !important;
+        padding-top: 12px !important;
+    }
+    .ikigai-circle > div {
+        max-width: 85% !important;
+    }
+    #diagramLove, #diagramGood, #diagramPaid, #diagramNeeds {
+        font-size: 9px !important;
+        line-height: 1.4 !important;
+    }
+    .ikigai-center {
+        min-width: 140px !important;
+        padding: 16px 18px !important;
+    }
+    .ikigai-tag {
+        font-size: 10px !important;
+        padding: 4px 8px !important;
     }
 }
 
