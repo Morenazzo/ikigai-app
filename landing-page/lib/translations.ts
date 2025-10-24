@@ -55,7 +55,7 @@ export const translations = {
       title: "Tu Viaje de 9 Pasos",
       subtitle: "Un proceso guiado de 25 minutos para desbloquear tu propósito divino",
       steps: [
-        { title: "Lo que AMAS", time: "5 min", description: "Lista hasta 10 cosas que amas hacer absolutamente" },
+        { title: "Lo que AMAS", time: "3 min", description: "Lista hasta 10 cosas que amas hacer absolutamente" },
         { title: "En lo que eres BUENO", time: "3 min", description: "Identifica hasta 10 habilidades y talentos naturales" },
         { title: "Por lo que te pueden PAGAR", time: "3 min", description: "Lista hasta 10 habilidades monetizables" },
         { title: "Lo que el mundo NECESITA", time: "3 min", description: "Anota hasta 10 problemas que te importan" },
@@ -168,7 +168,7 @@ export const translations = {
       title: "Your 9-Step Journey",
       subtitle: "A 25-minute guided process to unlock your divine purpose",
       steps: [
-        { title: "What You LOVE", time: "5 min", description: "List up to 10 things you absolutely love doing" },
+        { title: "What You LOVE", time: "3 min", description: "List up to 10 things you absolutely love doing" },
         { title: "What You're GOOD AT", time: "3 min", description: "Identify up to 10 natural skills and talents" },
         { title: "What You Can Be PAID FOR", time: "3 min", description: "List up to 10 monetizable skills" },
         { title: "What The World NEEDS", time: "3 min", description: "Note up to 10 problems you care about" },

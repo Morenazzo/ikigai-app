@@ -719,6 +719,16 @@
 </div>
 
 <script>
+// Translations from server
+const translations = {
+    ready: "{{ t('ready') }}",
+    start_timer: "{{ t('start_timer') }}",
+    pause: "{{ t('pause') }}",
+    continue: "{{ t('continue') }}",
+    step_of: "{{ t('step_of', current='__CURRENT__', total='__TOTAL__') }}".replace('__CURRENT__', '{current}').replace('__TOTAL__', '{total}'),
+    saved: "{{ t('saved') }}"
+};
+
 let currentStep = 1;
 const totalSteps = 10;
 let timers = {};
@@ -842,10 +852,10 @@ function showInstructions(step) {
     startContainer.style.marginTop = '40px';
     startContainer.innerHTML = `
         <div style="font-size: 24px; color: var(--navy); margin-bottom: 20px; font-weight: 500;">
-            Ready?
+            ${translations.ready}
         </div>
         <button class="btn btn-primary btn-lg" onclick="startStep(${step})" style="font-size: 20px; padding: 15px 50px;">
-            ▶️ Start Timer
+            ${translations.start_timer}
         </button>
     `;
     
@@ -1118,7 +1128,7 @@ function pauseTimer(step) {
 function updateProgress() {
     const progress = (currentStep / totalSteps) * 100;
     document.getElementById('progressBar').style.width = progress + '%';
-    document.getElementById('stepIndicator').textContent = `Step ${currentStep} of ${totalSteps}`;
+    document.getElementById('stepIndicator').textContent = translations.step_of.replace('{current}', currentStep).replace('{total}', totalSteps);
 }
 
 function collectData() {

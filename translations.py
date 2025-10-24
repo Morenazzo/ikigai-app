@@ -98,7 +98,7 @@ TRANSLATIONS = {
         'previous': 'Anterior',
         'finish': 'Finalizar y Ver Resultados',
         'ready': '¿Listo?',
-        'start_timer': 'Iniciar Temporizador',
+        'start_timer': '▶ Iniciar Temporizador',
         
         # Placeholders
         'something_love': 'Algo que amas...',
