@@ -396,9 +396,22 @@ def thanks():
 @app.route("/results")
 def results():
     """Display all stored Ikigai responses."""
+    import json
     responses = db.execute(
         "SELECT * FROM ikigai_responses ORDER BY timestamp DESC"
     )
+    # Parse ikigai_evaluations JSON into a list for template usage
+    for row in responses:
+        eval_str = row.get("ikigai_evaluations") if isinstance(row, dict) else None
+        parsed = []
+        if eval_str:
+            try:
+                parsed = json.loads(eval_str)
+                if not isinstance(parsed, list):
+                    parsed = []
+            except Exception:
+                parsed = []
+        row["ikigai_eval_list"] = parsed
     return render_template("results.html", responses=responses)
 
 

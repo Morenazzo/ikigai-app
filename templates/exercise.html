@@ -292,7 +292,7 @@
         </div>
         
         <!-- AI Suggestions Button -->
-        <div style="text-align: center; margin-bottom: 20px;">
+        <div id="aiContainer5" style="text-align: center; margin-bottom: 20px; display: none;">
             <button class="btn btn-secondary" onclick="getAISuggestions('passion', 'love', 'good')" id="aiBtn5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
                 ✨ {{ t('ai_suggestions') }}
             </button>
@@ -354,7 +354,7 @@
         </div>
         
         <!-- AI Suggestions Button -->
-        <div style="text-align: center; margin-bottom: 20px;">
+        <div id="aiContainer6" style="text-align: center; margin-bottom: 20px; display: none;">
             <button class="btn btn-secondary" onclick="getAISuggestions('mission', 'love', 'needs')" id="aiBtn6" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
                 ✨ {{ t('ai_suggestions') }}
             </button>
@@ -416,7 +416,7 @@
         </div>
         
         <!-- AI Suggestions Button -->
-        <div style="text-align: center; margin-bottom: 20px;">
+        <div id="aiContainer7" style="text-align: center; margin-bottom: 20px; display: none;">
             <button class="btn btn-secondary" onclick="getAISuggestions('vocation', 'needs', 'paid')" id="aiBtn7" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
                 ✨ {{ t('ai_suggestions') }}
             </button>
@@ -478,7 +478,7 @@
         </div>
         
         <!-- AI Suggestions Button -->
-        <div style="text-align: center; margin-bottom: 20px;">
+        <div id="aiContainer8" style="text-align: center; margin-bottom: 20px; display: none;">
             <button class="btn btn-secondary" onclick="getAISuggestions('profession', 'good', 'paid')" id="aiBtn8" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
                 ✨ {{ t('ai_suggestions') }}
             </button>
@@ -583,7 +583,7 @@
         </div>
         
         <!-- AI Suggestions for Ikigai -->
-        <div style="text-align: center; margin-bottom: 20px;">
+        <div id="aiContainer9" style="text-align: center; margin-bottom: 20px; display: none;">
             <button class="btn btn-secondary" onclick="getIkigaiSuggestions()" id="aiBtn9" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
                 ✨ {{ t('ai_suggestions') }}
             </button>
@@ -902,6 +902,12 @@ function showInstructions(step) {
     if (inputGroup) inputGroup.style.display = 'none';
     if (buttonGroup) buttonGroup.style.display = 'none';
     
+    // Hide AI suggestion containers for steps 5-9 while on instruction screen
+    if (step >= 5 && step <= 9) {
+        const aiContainer = document.getElementById(`aiContainer${step}`);
+        if (aiContainer) aiContainer.style.display = 'none';
+    }
+    
     // Hide diagram if step 9
     if (step === 9) {
         const ikigaiDiagram = document.getElementById('ikigaiDiagram');
@@ -946,6 +952,12 @@ function startStep(step) {
     if (timerDisplay) timerDisplay.style.display = 'block';
     if (inputGroup) inputGroup.style.display = 'block';
     if (buttonGroup) buttonGroup.style.display = 'flex';
+    
+    // Show AI suggestion containers only after starting the timer (steps 5-9)
+    if (step >= 5 && step <= 9) {
+        const aiContainer = document.getElementById(`aiContainer${step}`);
+        if (aiContainer) aiContainer.style.display = 'block';
+    }
     
     // Show previous answers for intersection steps (5-8)
     if (step === 5) {
