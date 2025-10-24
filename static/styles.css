@@ -505,10 +505,12 @@ textarea.input-field:focus {
     }
 }
 
-/* Ikigai Diagram Mobile Refinements */
+/* Ikigai Diagram Mobile Refinements - Exercise & Results Pages */
 @media (max-width: 767px) {
+    /* Exercise page diagram */
     #ikigaiDiagram {
-        padding: 16px !important;
+        padding: 12px !important;
+        margin: 30px 0 20px !important;
     }
     .ikigai-map-inner {
         max-width: 320px !important;
@@ -517,21 +519,97 @@ textarea.input-field:focus {
         width: 150px !important;
         height: 150px !important;
         padding-top: 12px !important;
+        border-width: 2px !important;
     }
     .ikigai-circle > div {
         max-width: 85% !important;
     }
     #diagramLove, #diagramGood, #diagramPaid, #diagramNeeds {
-        font-size: 9px !important;
+        font-size: 8px !important;
         line-height: 1.4 !important;
     }
     .ikigai-center {
-        min-width: 140px !important;
-        padding: 16px 18px !important;
+        min-width: 100px !important;
+        padding: 14px 16px !important;
+    }
+    .ikigai-center > div:first-child {
+        font-size: 9px !important;
+    }
+    .ikigai-center > div:last-child {
+        font-size: 12px !important;
     }
     .ikigai-tag {
+        font-size: 8px !important;
+        padding: 4px 6px !important;
+    }
+    
+    /* Results page diagram (#ikigai-diagram) */
+    #ikigai-diagram {
+        padding: 12px !important;
+        margin: 30px 0 20px !important;
+    }
+    #ikigai-diagram h3 {
+        font-size: 20px !important;
+    }
+    #ikigai-diagram p {
+        font-size: 13px !important;
+    }
+    #ikigai-diagram > div:last-of-type {
+        max-width: 340px !important;
+        padding: 8px !important;
+    }
+    /* Center ikigai circle in results */
+    #ikigai-diagram [style*="z-index: 10"] {
+        min-width: 110px !important;
+        max-width: 140px !important;
+        padding: 18px 22px !important;
+    }
+    #ikigai-diagram [style*="z-index: 10"] > div:first-child {
         font-size: 10px !important;
-        padding: 4px 8px !important;
+        margin-bottom: 4px !important;
+    }
+    #ikigai-diagram [style*="z-index: 10"] > div:last-child {
+        font-size: 12px !important;
+        line-height: 1.3 !important;
+    }
+    /* Outer circles in results */
+    #ikigai-diagram [style*="width: 280px"] {
+        width: 160px !important;
+        height: 160px !important;
+        border-width: 3px !important;
+        padding: 10px !important;
+    }
+    #ikigai-diagram [style*="width: 280px"] > div {
+        max-width: 90% !important;
+    }
+    #ikigai-diagram [style*="width: 280px"] > div > div:first-child {
+        font-size: 10px !important;
+        margin-bottom: 4px !important;
+    }
+    #ikigai-diagram [style*="width: 280px"] > div > div:last-child {
+        font-size: 8px !important;
+        line-height: 1.3 !important;
+    }
+    
+    /* Main container adjustments */
+    main {
+        padding: 16px !important;
+        margin: 16px 10px !important;
+    }
+    .result-card {
+        padding: 16px !important;
+    }
+    .result-card h1 {
+        font-size: 28px !important;
+    }
+    .result-card h2 {
+        font-size: 24px !important;
+    }
+    .result-card h3 {
+        font-size: 20px !important;
+    }
+    .result-card h4 {
+        font-size: 16px !important;
     }
 }
 
