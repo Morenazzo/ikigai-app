@@ -258,6 +258,14 @@ def about():
 @app.route("/exercise", methods=["GET", "POST"])
 def exercise():
     """Exercise to fill your ikigai"""
+    # Redirect to login if not authenticated
+    if not session.get("user_id"):
+        # Save language preference and return URL
+        lang_param = request.args.get('lang', 'es')
+        session['language'] = lang_param
+        session['return_to'] = request.url
+        return redirect("/login")
+    
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
     if lang_param in ['es', 'en']:
@@ -502,8 +510,9 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
-        # Redirect user to home page
-        return redirect("/")
+        # Redirect to where user was trying to go, or home page
+        return_to = session.pop('return_to', '/')
+        return redirect(return_to)
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -557,7 +566,9 @@ def register():
 
         session["user_id"] = newUser
 
-        return redirect("/")
+        # Redirect to where user was trying to go, or exercise page
+        return_to = session.pop('return_to', '/exercise')
+        return redirect(return_to)
 
 
 
