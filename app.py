@@ -313,9 +313,17 @@ def clerk_callback():
 
 
 @app.route("/exercise", methods=["GET", "POST"])
-@login_required
 def exercise():
-    """Exercise to fill your ikigai"""
+    """Exercise to fill your ikigai - Open access, auth required only to save"""
+    # Allow guest access - authentication required only when submitting results
+    
+    # Create guest session if no user_id
+    if not session.get("user_id"):
+        # Generate temporary guest ID
+        import uuid
+        guest_id = f"guest_{uuid.uuid4().hex[:8]}"
+        session["guest_id"] = guest_id
+        session["is_guest"] = True
     
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
@@ -330,6 +338,16 @@ def exercise():
 @app.route("/submit_exercise", methods=["POST"])
 def submit_exercise():
     import json
+    
+    # Check if user is authenticated
+    if session.get("is_guest") or not session.get("user_id"):
+        # Save exercise data to session for after login
+        session['pending_exercise_data'] = dict(request.form)
+        session['return_to'] = '/save_exercise'
+        
+        # Redirect to landing page for Clerk authentication
+        landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+        return redirect(f"{landing_url}?redirect_to=/save_exercise&auth_required=true")
 
     # Get JSON data from form
     love = request.form.get("love", "[]")
@@ -441,6 +459,117 @@ def submit_exercise():
         )
         return apology("An error occurred. Please try again.")
 
+    return redirect("/results")
+
+
+@app.route("/save_exercise", methods=["GET"])
+@login_required
+def save_exercise():
+    """Save exercise data after user authenticates via Clerk"""
+    # Check if there's pending exercise data
+    pending_data = session.get('pending_exercise_data')
+    
+    if not pending_data:
+        # No pending data, redirect to results or exercise
+        return redirect("/exercise")
+    
+    # Clear guest flag
+    session.pop('is_guest', None)
+    session.pop('guest_id', None)
+    
+    # Process the saved data (reuse submit_exercise logic)
+    import json
+    
+    love = pending_data.get("love", "[]")
+    good = pending_data.get("good", "[]")
+    paid = pending_data.get("paid", "[]")
+    needs = pending_data.get("needs", "[]")
+    passion = pending_data.get("passion", "[]")
+    mission = pending_data.get("mission", "[]")
+    vocation = pending_data.get("vocation", "[]")
+    profession = pending_data.get("profession", "[]")
+    ikigai = pending_data.get("ikigai", "[]")
+    impact = pending_data.get("impact", "")
+    ikigai_evaluations = pending_data.get("ikigai_evaluations", "[]")
+    
+    # Convert arrays to comma-separated strings for storage
+    try:
+        love_list = json.loads(love)
+        good_list = json.loads(good)
+        paid_list = json.loads(paid)
+        needs_list = json.loads(needs)
+        passion_list = json.loads(passion)
+        mission_list = json.loads(mission)
+        vocation_list = json.loads(vocation)
+        profession_list = json.loads(profession)
+        ikigai_list = json.loads(ikigai)
+        
+        love_str = ", ".join(love_list) if love_list else ""
+        good_str = ", ".join(good_list) if good_list else ""
+        paid_str = ", ".join(paid_list) if paid_list else ""
+        needs_str = ", ".join(needs_list) if needs_list else ""
+        passion_str = ", ".join(passion_list) if passion_list else ""
+        mission_str = ", ".join(mission_list) if mission_list else ""
+        vocation_str = ", ".join(vocation_list) if vocation_list else ""
+        profession_str = ", ".join(profession_list) if profession_list else ""
+        ikigai_str = ", ".join(ikigai_list) if ikigai_list else ""
+    except:
+        love_str = love
+        good_str = good
+        paid_str = paid
+        needs_str = needs
+        passion_str = passion
+        mission_str = mission
+        vocation_str = vocation
+        profession_str = profession
+        ikigai_str = ikigai
+
+    try:
+        # Insert data
+        db.execute(
+            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, ikigai, impact, ikigai_evaluations) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            love_str,
+            needs_str,
+            paid_str,
+            good_str,
+            passion_str,
+            mission_str,
+            vocation_str,
+            ikigai_str,
+            impact,
+            ikigai_evaluations,
+        )
+        
+        # Award Surfer Points
+        points_breakdown = {
+            'base_sections': 40,
+            'intersections': 60,
+            'ikigai_keywords': 30,
+            'impact_vision': 20,
+            'completion_bonus': 50
+        }
+        points_awarded = sum(points_breakdown.values())
+        
+        user_id = session.get("user_id")
+        if user_id:
+            try:
+                db.execute(
+                    "UPDATE users SET surfer_points = surfer_points + ? WHERE id = ?",
+                    points_awarded,
+                    user_id
+                )
+                session["points_earned"] = points_awarded
+                session["points_breakdown"] = points_breakdown
+            except Exception as e:
+                app.logger.error("Error awarding points: %s", e)
+        
+        # Clear pending data
+        session.pop('pending_exercise_data', None)
+        
+    except Exception as e:
+        app.logger.error("Error saving exercise after auth: %s", e)
+        return apology("Error saving your Ikigai. Please try again.")
+    
     return redirect("/results")
 
 

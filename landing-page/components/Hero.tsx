@@ -73,12 +73,29 @@ export default function Hero() {
             </span>
           </button>
           
-          <a
-            href="#how-it-works"
-            className="px-8 py-4 border-2 border-navy-dark text-navy-dark rounded-full font-dm-sans font-bold text-lg hover:bg-navy-dark hover:text-white transition-all duration-300"
-          >
-            {t.hero.ctaSecondary}
-          </a>
+          {!isSignedIn ? (
+            <a
+              href="#how-it-works"
+              className="px-8 py-4 border-2 border-navy-dark text-navy-dark rounded-full font-dm-sans font-bold text-lg hover:bg-navy-dark hover:text-white transition-all duration-300"
+            >
+              {t.hero.ctaSecondary}
+            </a>
+          ) : (
+            <div className="flex gap-3">
+              <a
+                href={`${process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001'}/results`}
+                className="px-8 py-4 border-2 border-teal-light text-teal-light rounded-full font-dm-sans font-bold text-lg hover:bg-teal-light hover:text-white transition-all duration-300"
+              >
+                📊 {language === 'es' ? 'Mis Resultados' : 'My Results'}
+              </a>
+              <a
+                href={`${process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001'}/dashboard`}
+                className="px-8 py-4 border-2 border-purple text-purple rounded-full font-dm-sans font-bold text-lg hover:bg-purple hover:text-white transition-all duration-300"
+              >
+                🏄‍♂️ {language === 'es' ? 'Mi Tablero' : 'My Dashboard'}
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Stats */}
