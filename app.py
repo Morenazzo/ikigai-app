@@ -283,16 +283,25 @@ def about():
 @app.route("/exercise", methods=["GET", "POST"])
 def exercise():
     """Exercise to fill your ikigai"""
-    # Redirect to landing page for Clerk authentication if not authenticated
+    # TEMPORARY: Allow access without auth for testing Surfer Points
+    # TODO: Re-enable authentication after Clerk integration is verified
+    
+    # Create a guest session if no user_id (for testing)
     if not session.get("user_id"):
-        # Save language preference
-        lang_param = request.args.get('lang', 'es')
-        session['language'] = lang_param
+        # Create or get guest user
+        guest_email = f"guest_{session.get('_permanent', 'test')}@surfing.digital"
+        existing_guest = db.execute("SELECT id FROM users WHERE username = ?", guest_email)
         
-        # Redirect to landing page with return URL
-        landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-        flask_url = request.url
-        return redirect(f"{landing_url}/start-exercise?return_to={flask_url}")
+        if existing_guest and len(existing_guest) > 0:
+            session["user_id"] = existing_guest[0]["id"]
+        else:
+            # Create guest user
+            placeholder_hash = generate_password_hash("guest")
+            guest_id = db.execute(
+                "INSERT INTO users (username, hash, surfer_points) VALUES (?, ?, ?)",
+                guest_email, placeholder_hash, 0
+            )
+            session["user_id"] = guest_id
     
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
