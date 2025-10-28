@@ -280,28 +280,42 @@ def about():
     return render_template("about.html")
 
 
+@app.route("/auth/clerk-callback", methods=["POST"])
+def clerk_callback():
+    """Handle Clerk authentication callback"""
+    clerk_token = request.form.get('clerk_token')
+    email = request.form.get('email')
+    lang = request.form.get('lang', 'es')
+    
+    if clerk_token and email:
+        # Verify token with Clerk
+        clerk = ClerkAuth()
+        user_data = clerk.verify_token(clerk_token)
+        
+        if user_data:
+            # Sync user to database
+            clerk_user_id = user_data.get('sub')
+            user_id = clerk.sync_user_to_db(db, clerk_user_id, email)
+            
+            if user_id:
+                # Set session
+                session['user_id'] = user_id
+                session['clerk_user_id'] = clerk_user_id
+                session['user_email'] = email
+                session['language'] = lang
+                
+                # Redirect to exercise
+                return redirect(f'/exercise?lang={lang}')
+    
+    # If authentication fails, redirect to landing page
+    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    return redirect(landing_url)
+
+
 @app.route("/exercise", methods=["GET", "POST"])
+@login_required
 def exercise():
     """Exercise to fill your ikigai"""
-    # TEMPORARY: Allow access without auth for testing Surfer Points
-    # TODO: Re-enable authentication after Clerk integration is verified
-    
-    # Create a guest session if no user_id (for testing)
-    if not session.get("user_id"):
-        # Create or get guest user
-        guest_email = f"guest_{session.get('_permanent', 'test')}@surfing.digital"
-        existing_guest = db.execute("SELECT id FROM users WHERE username = ?", guest_email)
-        
-        if existing_guest and len(existing_guest) > 0:
-            session["user_id"] = existing_guest[0]["id"]
-        else:
-            # Create guest user
-            placeholder_hash = generate_password_hash("guest")
-            guest_id = db.execute(
-                "INSERT INTO users (username, hash, surfer_points) VALUES (?, ?, ?)",
-                guest_email, placeholder_hash, 0
-            )
-            session["user_id"] = guest_id
     
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
@@ -521,50 +535,28 @@ def dashboard():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Log user in"""
-
-    # Forget any user_id
-    session.clear()
-
-    # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
-
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
-
-        # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
-
-        # Ensure username exists and password is correct
-        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
-
-        # Remember which user has logged in
-        session["user_id"] = rows[0]["id"]
-
-        # Redirect to where user was trying to go, or home page
-        return_to = session.pop('return_to', '/')
-        return redirect(return_to)
-
-    # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
+    """Redirect to Clerk authentication"""
+    # Store where user was trying to go
+    return_to = request.args.get('return_to', '/exercise')
+    session['return_to'] = return_to
+    
+    # Redirect to Clerk Account Portal for authentication
+    clerk_domain = "https://live-jaybird-81.accounts.dev"
+    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    
+    # Redirect to landing page which will handle Clerk authentication
+    return redirect(f"{landing_url}?redirect_to={return_to}")
 
 
 @app.route("/logout")
 def logout():
     """Log user out"""
-
-    # Forget any user_id
+    # Clear Flask session
     session.clear()
-
-    # Redirect user to login form
-    return redirect("/")
+    
+    # Redirect to landing page (Clerk will handle logout)
+    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    return redirect(landing_url)
 
 
 @app.route("/impact", methods=["GET", "POST"])
@@ -577,35 +569,14 @@ def impact():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    """Register user"""
-    if request.method == "GET":
-        return render_template("register.html")
-    else:
-        email = request.form.get("email")
-        password = request.form.get("password")
-        confirm = request.form.get("confirm")
-
-        if not email or not password or not confirm:
-            return apology("No empty Fields")
-
-        if len(password) < 8:
-            return apology("Password must be at least 8 characters")
-
-        if password != confirm:
-            return apology("Passwords Do Not Match")
-
-        hash = generate_password_hash(password)
-
-        try:
-            newUser = db.execute ("INSERT INTO users(username, hash) VALUES (?, ?)", email, hash)
-        except:
-            return apology("User Already Used")
-
-        session["user_id"] = newUser
-
-        # Redirect to where user was trying to go, or exercise page
-        return_to = session.pop('return_to', '/exercise')
-        return redirect(return_to)
+    """Redirect to Clerk sign up"""
+    # Store where user was trying to go
+    return_to = request.args.get('return_to', '/exercise')
+    session['return_to'] = return_to
+    
+    # Redirect to landing page for Clerk authentication
+    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    return redirect(f"{landing_url}?redirect_to={return_to}")
 
 
 

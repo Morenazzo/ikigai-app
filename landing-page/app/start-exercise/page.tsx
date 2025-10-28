@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from 'react';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useAuth } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 // Disable static rendering for this page
@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 
 export default function StartExercise() {
   const { isLoaded, isSignedIn, user } = useUser();
+  const { getToken } = useAuth();
   const router = useRouter();
   
   // Get language from localStorage or default to 'es'
@@ -20,18 +21,59 @@ export default function StartExercise() {
   };
 
   useEffect(() => {
-    if (isLoaded) {
-      if (!isSignedIn) {
-        // Si no está autenticado, redirigir a sign-up
-        router.push('/sign-up');
-      } else {
-        // Usuario autenticado, redirigir a Flask con idioma
-        const language = getLanguage();
-        const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
-        window.location.href = `${flaskUrl}/exercise?lang=${language}`;
+    const redirectToFlask = async () => {
+      if (isLoaded) {
+        if (!isSignedIn) {
+          // Si no está autenticado, redirigir a sign-up
+          router.push('/sign-up');
+        } else {
+          // Usuario autenticado, obtener token y redirigir a Flask
+          try {
+            const token = await getToken();
+            const language = getLanguage();
+            const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
+            
+            // Create form to POST to Flask with token
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `${flaskUrl}/auth/clerk-callback`;
+            
+            // Add token
+            const tokenInput = document.createElement('input');
+            tokenInput.type = 'hidden';
+            tokenInput.name = 'clerk_token';
+            tokenInput.value = token || '';
+            form.appendChild(tokenInput);
+            
+            // Add language
+            const langInput = document.createElement('input');
+            langInput.type = 'hidden';
+            langInput.name = 'lang';
+            langInput.value = language;
+            form.appendChild(langInput);
+            
+            // Add user email
+            const emailInput = document.createElement('input');
+            emailInput.type = 'hidden';
+            emailInput.name = 'email';
+            emailInput.value = user?.primaryEmailAddress?.emailAddress || '';
+            form.appendChild(emailInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+          } catch (error) {
+            console.error('Error getting Clerk token:', error);
+            // Fallback: redirect without token
+            const language = getLanguage();
+            const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
+            window.location.href = `${flaskUrl}/exercise?lang=${language}`;
+          }
+        }
       }
-    }
-  }, [isLoaded, isSignedIn, router]);
+    };
+    
+    redirectToFlask();
+  }, [isLoaded, isSignedIn, user, router, getToken]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-navy-dark via-teal-dark to-blue">
