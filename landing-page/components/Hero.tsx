@@ -24,7 +24,7 @@ export default function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 py-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 pt-24 pb-20 md:py-20">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-teal-light opacity-20 rounded-full blur-3xl animate-float"></div>
@@ -35,10 +35,10 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-light to-blue-light text-white rounded-full font-dm-sans font-bold text-sm mb-8 animate-pulse-glow">
-          <span className="text-2xl">✨</span>
-          <span>{t.hero.badge}</span>
-          <span className="text-2xl">✨</span>
+        <div className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-gradient-to-r from-teal-light to-blue-light text-white rounded-full font-dm-sans font-bold text-xs md:text-sm mb-6 md:mb-8 animate-pulse-glow max-w-[90%] mx-auto">
+          <span className="text-lg md:text-2xl">✨</span>
+          <span className="text-center">{t.hero.badge}</span>
+          <span className="text-lg md:text-2xl">✨</span>
         </div>
 
         {/* Main Headline */}
