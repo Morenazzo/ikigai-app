@@ -1,40 +1,42 @@
 "use client";
 
+import { useLanguage } from '@/contexts/LanguageContext';
+
 export default function Features() {
-  const features = [
-    {
-      icon: "💖",
-      title: "Lo que AMAS",
-      description: "Los deseos más profundos de tu corazón",
-      color: "from-pink to-pink/70",
-      bgColor: "bg-pink/5",
-      borderColor: "border-pink",
-    },
-    {
-      icon: "⚡",
-      title: "En lo que eres BUENO",
-      description: "Tus superpoderes naturales",
-      color: "from-blue to-blue-light",
-      bgColor: "bg-blue/5",
-      borderColor: "border-blue",
-    },
-    {
-      icon: "💎",
-      title: "Por lo que te pueden PAGAR",
-      description: "Tu contribución valiosa",
-      color: "from-teal-light to-teal-light/70",
-      bgColor: "bg-teal-light/5",
-      borderColor: "border-teal-light",
-    },
-    {
-      icon: "🌍",
-      title: "Lo que el mundo NECESITA",
-      description: "Tu misión divina",
-      color: "from-purple to-purple/70",
-      bgColor: "bg-purple/5",
-      borderColor: "border-purple",
-    },
-  ];
+  const { t } = useLanguage();
+  
+  const features = t.features.items.map((item, index) => {
+    const styles = [
+      {
+        icon: "💖",
+        color: "from-pink to-pink/70",
+        bgColor: "bg-pink/5",
+        borderColor: "border-pink",
+      },
+      {
+        icon: "⚡",
+        color: "from-blue to-blue-light",
+        bgColor: "bg-blue/5",
+        borderColor: "border-blue",
+      },
+      {
+        icon: "💎",
+        color: "from-teal-light to-teal-light/70",
+        bgColor: "bg-teal-light/5",
+        borderColor: "border-teal-light",
+      },
+      {
+        icon: "🌍",
+        color: "from-purple to-purple/70",
+        bgColor: "bg-purple/5",
+        borderColor: "border-purple",
+      },
+    ];
+    return {
+      ...item,
+      ...styles[index],
+    };
+  });
 
   return (
     <section className="py-20 px-4 relative overflow-hidden">
@@ -50,10 +52,10 @@ export default function Features() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-dm-sans font-bold text-navy-dark mb-4">
-            ¿Qué es Ikigai?
+            {t.features.title}
           </h2>
           <p className="text-xl text-teal-dark font-open-sans max-w-2xl mx-auto">
-            La intersección de tus dones divinos
+            {t.features.subtitle}
           </p>
         </div>
 
@@ -87,13 +89,13 @@ export default function Features() {
         </div>
 
         {/* Center Image/Diagram */}
-        <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+        <div className="max-w-3xl mx-auto bg-white/80 backdrop-blur-sm rounded-3xl p-4 md:p-8 shadow-2xl">
           <div className="text-center mb-8">
-            <h3 className="text-2xl font-dm-sans font-bold text-navy-dark mb-4">
-              Tu Mapa del Tesoro Personal
+            <h3 className="text-xl md:text-2xl font-dm-sans font-bold text-navy-dark mb-4">
+              {t.features.mapTitle}
             </h3>
-            <p className="text-teal-dark font-open-sans">
-              <strong>Ikigai</strong> (生き甲斐) combina <em>"iki"</em> (vida) y <em>"gai"</em> (valor). Es el <strong className="text-pink">tesoro</strong> que Dios incrustó en tu ADN—tu contribución única al mundo.
+            <p className="text-sm md:text-base text-teal-dark font-open-sans px-2">
+              {t.features.mapDescription}
             </p>
           </div>
 
@@ -102,18 +104,18 @@ export default function Features() {
             <img 
               src="https://imageio.forbes.com/blogs-images/chrismyers/files/2018/02/ikigai-1.png?format=png&width=500" 
               alt="Diagrama Ikigai"
-              className="w-full h-full object-contain p-4"
+              className="w-full h-full object-contain p-2 md:p-4"
             />
           </div>
 
           {/* Bottom Quote */}
-          <div className="mt-8 p-6 bg-gradient-to-r from-pink/10 to-teal-light/10 rounded-2xl border-l-4 border-teal-light">
-            <p className="text-center font-open-sans text-navy-dark leading-relaxed">
-              <strong className="text-teal-light text-lg">✨ Donde estos cuatro convergen,</strong>
+          <div className="mt-8 p-4 md:p-6 bg-gradient-to-r from-pink/10 to-teal-light/10 rounded-2xl border-l-4 border-teal-light">
+            <p className="text-center font-open-sans text-navy-dark leading-relaxed text-sm md:text-base">
+              <strong className="text-teal-light text-base md:text-lg">{t.features.convergence}</strong>
               <br />
-              encontrarás tu <strong className="text-pink text-lg">Ikigai</strong>—
+              {t.features.findIkigai}
               <br />
-              <span className="text-teal-dark">tu propósito dado por Dios para impactar millones de vidas.</span>
+              <span className="text-teal-dark">{t.features.purpose}</span>
             </p>
           </div>
         </div>

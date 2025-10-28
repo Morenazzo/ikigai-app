@@ -1,36 +1,23 @@
 "use client";
 
+import { useLanguage } from '@/contexts/LanguageContext';
+
 export default function Pillars() {
-  const pillars = [
-    {
-      title: "Pasión",
-      subtitle: "Lo que amas + En lo que eres bueno",
-      icon: "💖",
-      gradient: "from-pink to-pink/70",
-      description: "Cuando combinas lo que amas con tus talentos naturales, nace tu pasión verdadera.",
-    },
-    {
-      title: "Misión",
-      subtitle: "Lo que amas + Lo que el mundo necesita",
-      icon: "🎯",
-      gradient: "from-purple to-purple/70",
-      description: "Tu misión surge cuando tus deseos se alinean con las necesidades del mundo.",
-    },
-    {
-      title: "Vocación",
-      subtitle: "Lo que el mundo necesita + Por lo que te pagan",
-      icon: "🌟",
-      gradient: "from-blue to-blue-light",
-      description: "Tu vocación conecta el impacto que quieres crear con valor económico real.",
-    },
-    {
-      title: "Profesión",
-      subtitle: "En lo que eres bueno + Por lo que te pagan",
-      icon: "💼",
-      gradient: "from-teal-light to-teal-light/70",
-      description: "Tu profesión es donde tus habilidades se convierten en valor monetizable.",
-    },
+  const { t } = useLanguage();
+  
+  const icons = ["💖", "🎯", "🌟", "💼"];
+  const gradients = [
+    "from-pink to-pink/70",
+    "from-purple to-purple/70",
+    "from-blue to-blue-light",
+    "from-teal-light to-teal-light/70",
   ];
+  
+  const pillars = t.pillars.items.map((item, index) => ({
+    ...item,
+    icon: icons[index],
+    gradient: gradients[index],
+  }));
 
   return (
     <section className="py-20 px-4 relative overflow-hidden">
@@ -39,12 +26,12 @@ export default function Pillars() {
       
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-dm-sans font-bold text-navy-dark mb-4">
-            Los Cuatro Pilares del Ikigai
+        <div className="text-center mb-16 px-4">
+          <h2 className="text-3xl md:text-5xl font-dm-sans font-bold text-navy-dark mb-4">
+            {t.pillars.title}
           </h2>
-          <p className="text-xl text-teal-dark font-open-sans max-w-2xl mx-auto">
-            Cada intersección revela una parte esencial de tu propósito
+          <p className="text-lg md:text-xl text-teal-dark font-open-sans max-w-2xl mx-auto">
+            {t.pillars.subtitle}
           </p>
         </div>
 
@@ -85,20 +72,19 @@ export default function Pillars() {
         </div>
 
         {/* Central Message */}
-        <div className="max-w-3xl mx-auto bg-gradient-to-r from-navy-dark to-teal-dark rounded-3xl p-10 text-center shadow-2xl">
+        <div className="max-w-3xl mx-auto bg-gradient-to-r from-navy-dark to-teal-dark rounded-3xl p-6 md:p-10 text-center shadow-2xl">
           <div className="text-5xl mb-4">✨💎✨</div>
-          <h3 className="text-3xl font-dm-sans font-bold text-white mb-4">
-            Tu Ikigai Está en el Centro
+          <h3 className="text-2xl md:text-3xl font-dm-sans font-bold text-white mb-4">
+            {t.pillars.centerTitle}
           </h3>
-          <p className="text-white/90 font-open-sans text-lg leading-relaxed mb-6">
-            Cuando descubres la intersección perfecta de estos cuatro pilares, encuentras tu <strong className="text-teal-light">IKIGAI</strong>—tu propósito único para transformar el mundo.
+          <p className="text-white/90 font-open-sans text-base md:text-lg leading-relaxed mb-6">
+            {t.pillars.centerDescription}
           </p>
-          <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/30">
-            <p className="text-white font-open-sans italic text-base">
-              "Porque somos la obra maestra de Dios. Él nos creó de nuevo en Cristo Jesús, <br />
-              para que hagamos las cosas buenas que preparó para nosotros tiempo atrás."
+          <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-white/30">
+            <p className="text-white font-open-sans italic text-sm md:text-base">
+              {t.pillars.quote}
               <br />
-              <strong className="text-teal-light">- Efesios 2:10</strong>
+              <strong className="text-teal-light">{t.pillars.quoteSource}</strong>
             </p>
           </div>
         </div>

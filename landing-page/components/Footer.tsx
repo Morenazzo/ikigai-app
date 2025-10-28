@@ -1,6 +1,10 @@
 "use client";
 
+import { useLanguage } from '@/contexts/LanguageContext';
+
 export default function Footer() {
+  const { t } = useLanguage();
+  
   return (
     <footer className="bg-gradient-to-br from-navy-dark via-navy-light to-teal-dark text-white py-12 px-4">
       <div className="max-w-7xl mx-auto">
@@ -16,32 +20,32 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-white/80 font-open-sans text-sm leading-relaxed">
-              Ayudando a las personas a descubrir su propósito divino y desbloquear sus superpoderes únicos.
+              {t.footer.brandDescription}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-dm-sans font-bold text-lg mb-4 text-teal-light">Navegación Rápida</h4>
+            <h4 className="font-dm-sans font-bold text-lg mb-4 text-teal-light">{t.footer.quickLinks}</h4>
             <ul className="space-y-2 font-open-sans">
               <li>
                 <a href="#" className="text-white/80 hover:text-teal-light transition-colors duration-200 text-sm">
-                  ¿Qué es Ikigai?
+                  {t.footer.links.whatIsIkigai}
                 </a>
               </li>
               <li>
                 <a href="#how-it-works" className="text-white/80 hover:text-teal-light transition-colors duration-200 text-sm">
-                  Cómo Funciona
+                  {t.footer.links.howItWorks}
                 </a>
               </li>
               <li>
                 <a href="http://localhost:5000/exercise" className="text-white/80 hover:text-teal-light transition-colors duration-200 text-sm">
-                  Comenzar Ahora
+                  {t.footer.links.startNow}
                 </a>
               </li>
               <li>
                 <a href="http://localhost:5000/impact" className="text-white/80 hover:text-teal-light transition-colors duration-200 text-sm">
-                  Impacto Comunitario
+                  {t.footer.links.impact}
                 </a>
               </li>
             </ul>
@@ -49,9 +53,9 @@ export default function Footer() {
 
           {/* Contact & Social */}
           <div>
-            <h4 className="font-dm-sans font-bold text-lg mb-4 text-teal-light">Conéctate</h4>
+            <h4 className="font-dm-sans font-bold text-lg mb-4 text-teal-light">{t.footer.connect}</h4>
             <p className="text-white/80 font-open-sans text-sm mb-4">
-              ¿Preguntas o comentarios sobre este proyecto?
+              {t.footer.contactText}
             </p>
             <div className="flex gap-4">
               <a 
@@ -77,24 +81,23 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Copyright */}
             <p className="text-white/60 font-open-sans text-sm text-center md:text-left">
-              © 2025 Surfing Digital. Hecho con ❤️ para aquellos que buscan su propósito.
+              {t.footer.copyright}
             </p>
 
             {/* Credits */}
             <div className="text-white/60 font-open-sans text-sm text-center md:text-right">
-              <p>生き甲斐を見つけよう (Encuentra tu Ikigai)</p>
+              <p>{t.footer.findYourIkigai}</p>
             </div>
           </div>
         </div>
 
         {/* Inspirational Quote */}
-        <div className="mt-8 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 text-center">
-          <p className="text-white/90 font-open-sans italic text-sm leading-relaxed">
-            "Porque somos la obra maestra de Dios. Él nos creó de nuevo en Cristo Jesús,<br />
-            para que hagamos las cosas buenas que preparó para nosotros tiempo atrás."
+        <div className="mt-8 p-4 md:p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 text-center">
+          <p className="text-white/90 font-open-sans italic text-xs md:text-sm leading-relaxed">
+            {t.pillars.quote}
           </p>
           <p className="text-teal-light font-dm-sans font-bold mt-2 text-sm">
-            - Efesios 2:10
+            {t.pillars.quoteSource}
           </p>
         </div>
       </div>

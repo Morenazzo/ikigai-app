@@ -5,7 +5,7 @@ import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 
 export default function HowItWorks() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
   
@@ -85,7 +85,7 @@ export default function HowItWorks() {
                 if (!isLoaded) return;
                 if (isSignedIn) {
                   const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
-                  window.location.href = `${flaskUrl}/exercise`;
+                  window.location.href = `${flaskUrl}/exercise?lang=${language}`;
                 } else {
                   router.push('/start-exercise');
                 }
