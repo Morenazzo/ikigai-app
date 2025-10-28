@@ -1236,6 +1236,11 @@ function nextStep() {
     // Auto-save before moving to next step
     autoSaveData();
     
+    // 🏄‍♂️ AWARD SURFER POINTS! (10 points per step)
+    if (typeof awardPoints === 'function') {
+        awardPoints(10, true);
+    }
+    
     // Stop current timer
     stopTimer(currentStep);
     
@@ -1336,6 +1341,55 @@ function submitExercise() {
         alert('Please describe your impact vision before submitting!');
         return;
     }
+    
+    // 🎉🏄‍♂️ MEGA CELEBRATION - IKIGAI DISCOVERED! 🎉🏄‍♂️
+    if (typeof launchConfetti === 'function') {
+        launchConfetti();
+    }
+    
+    // Play celebration sound
+    if (typeof celebrationSound !== 'undefined') {
+        celebrationSound.play().catch(e => console.log('Celebration audio failed:', e));
+    }
+    
+    // Award 100 BONUS POINTS for discovering Ikigai!
+    if (typeof awardPoints === 'function') {
+        setTimeout(() => {
+            awardPoints(100, false);
+        }, 500);
+    }
+    
+    // Show epic achievement message
+    const achievementBanner = document.createElement('div');
+    achievementBanner.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: white;
+        padding: 40px 60px;
+        border-radius: 30px;
+        font-size: 2.5rem;
+        font-weight: bold;
+        text-align: center;
+        z-index: 10000;
+        box-shadow: 0 20px 60px rgba(255, 165, 0, 0.6);
+        animation: bounceIn 0.8s;
+    `;
+    achievementBanner.innerHTML = `
+        <div style="font-size: 4rem; margin-bottom: 15px;">🏄‍♂️🎉🌊</div>
+        <div>¡TOP SURFER DIGITAL!</div>
+        <div style="font-size: 1.5rem; margin-top: 15px; font-weight: normal;">+100 Surfer Points Bonus</div>
+        <div style="font-size: 1.2rem; margin-top: 10px; opacity: 0.9;">Has descubierto tu Ikigai</div>
+    `;
+    document.body.appendChild(achievementBanner);
+    
+    // Remove banner after 4 seconds
+    setTimeout(() => {
+        achievementBanner.style.animation = 'fadeOut 0.5s';
+        setTimeout(() => achievementBanner.remove(), 500);
+    }, 4000);
     
     // Collect ikigai evaluations
     const evaluations = [];

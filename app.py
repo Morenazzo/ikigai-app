@@ -754,3 +754,56 @@ Format in clean markdown with headers."""
     except Exception as e:
         app.logger.error(f"AI analysis error: {e}")
         return jsonify({"error": "Failed to generate analysis"}), 500
+
+
+@app.route("/api/add_points", methods=["POST"])
+@login_required
+def add_points():
+    """Award Surfer Points to user"""
+    try:
+        data = request.get_json()
+        points = int(data.get("points", 0))
+        
+        if points <= 0 or points > 100:
+            return jsonify({"error": "Invalid points amount"}), 400
+        
+        # Get current points
+        user = db.execute("SELECT surfer_points FROM users WHERE id = ?", session["user_id"])
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        current_points = user[0]["surfer_points"] or 0
+        new_total = current_points + points
+        
+        # Update points in database
+        db.execute(
+            "UPDATE users SET surfer_points = ? WHERE id = ?",
+            new_total, session["user_id"]
+        )
+        
+        return jsonify({
+            "success": True,
+            "points_awarded": points,
+            "total_points": new_total
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Add points error: {e}")
+        return jsonify({"error": "Failed to add points"}), 500
+
+
+@app.route("/api/get_points", methods=["GET"])
+@login_required
+def get_points():
+    """Get user's current Surfer Points"""
+    try:
+        user = db.execute("SELECT surfer_points FROM users WHERE id = ?", session["user_id"])
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        points = user[0]["surfer_points"] or 0
+        return jsonify({"points": points, "success": True})
+        
+    except Exception as e:
+        app.logger.error(f"Get points error: {e}")
+        return jsonify({"error": "Failed to get points"}), 500
