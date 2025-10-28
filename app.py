@@ -16,6 +16,7 @@ from openai import OpenAI
 
 from helpers import apology, login_required
 from translations import get_translation, get_user_language, TRANSLATIONS
+from clerk_auth import ClerkAuth
 
 # Configure application
 app = Flask(__name__)
@@ -230,7 +231,31 @@ ensure_tables()
 
 @app.before_request
 def load_user_points():
-    """Load user's surfer points into session before each request"""
+    """Load user's surfer points and handle Clerk authentication"""
+    # Check for Clerk session token
+    clerk_token = (
+        request.headers.get("Authorization", "").replace("Bearer ", "") or
+        request.cookies.get("__session") or
+        request.cookies.get("__clerk_db_jwt")
+    )
+    
+    # If we have a Clerk token and no user_id, authenticate with Clerk
+    if clerk_token and not session.get("user_id"):
+        clerk = ClerkAuth()
+        user_data = clerk.verify_token(clerk_token)
+        
+        if user_data:
+            clerk_user_id = user_data.get("sub")
+            email = user_data.get("email", f"clerk_{clerk_user_id}")
+            
+            # Sync Clerk user to our database
+            user_id = clerk.sync_user_to_db(db, clerk_user_id, email)
+            if user_id:
+                session["user_id"] = user_id
+                session["clerk_user_id"] = clerk_user_id
+                session["user_email"] = email
+    
+    # Load surfer points for authenticated user
     user_id = session.get("user_id")
     if user_id:
         try:
@@ -258,13 +283,16 @@ def about():
 @app.route("/exercise", methods=["GET", "POST"])
 def exercise():
     """Exercise to fill your ikigai"""
-    # Redirect to login if not authenticated
+    # Redirect to landing page for Clerk authentication if not authenticated
     if not session.get("user_id"):
-        # Save language preference and return URL
+        # Save language preference
         lang_param = request.args.get('lang', 'es')
         session['language'] = lang_param
-        session['return_to'] = request.url
-        return redirect("/login")
+        
+        # Redirect to landing page with return URL
+        landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+        flask_url = request.url
+        return redirect(f"{landing_url}/start-exercise?return_to={flask_url}")
     
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
