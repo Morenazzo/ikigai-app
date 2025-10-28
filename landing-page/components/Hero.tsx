@@ -13,14 +13,9 @@ export default function Hero() {
     // Si está cargando, esperar
     if (!isLoaded) return;
     
-    // Si ya está autenticado, ir directo al ejercicio con el idioma
-    if (isSignedIn) {
-      const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
-      window.location.href = `${flaskUrl}/exercise?lang=${language}`;
-    } else {
-      // Si no está autenticado, ir a la página intermedia que redirige a sign-up
-      router.push('/start-exercise');
-    }
+    // SIEMPRE redirigir a /start-exercise para autenticación
+    // Esto asegura que el usuario esté autenticado antes de empezar
+    router.push('/start-exercise');
   };
 
   return (
@@ -73,15 +68,8 @@ export default function Hero() {
             </span>
           </button>
           
-          {!isSignedIn ? (
-            <a
-              href="#how-it-works"
-              className="px-8 py-4 border-2 border-navy-dark text-navy-dark rounded-full font-dm-sans font-bold text-lg hover:bg-navy-dark hover:text-white transition-all duration-300"
-            >
-              {t.hero.ctaSecondary}
-            </a>
-          ) : (
-            <div className="flex gap-3">
+          {isSignedIn && (
+            <div className="flex flex-col sm:flex-row gap-3">
               <a
                 href={`${process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001'}/results`}
                 className="px-8 py-4 border-2 border-teal-light text-teal-light rounded-full font-dm-sans font-bold text-lg hover:bg-teal-light hover:text-white transition-all duration-300"

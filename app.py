@@ -313,17 +313,10 @@ def clerk_callback():
 
 
 @app.route("/exercise", methods=["GET", "POST"])
+@login_required
 def exercise():
-    """Exercise to fill your ikigai - Open access, auth required only to save"""
-    # Allow guest access - authentication required only when submitting results
-    
-    # Create guest session if no user_id
-    if not session.get("user_id"):
-        # Generate temporary guest ID
-        import uuid
-        guest_id = f"guest_{uuid.uuid4().hex[:8]}"
-        session["guest_id"] = guest_id
-        session["is_guest"] = True
+    """Exercise to fill your ikigai - Requires authentication"""
+    # User must be authenticated to access
     
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
@@ -336,18 +329,9 @@ def exercise():
     return render_template("exercise.html")
 
 @app.route("/submit_exercise", methods=["POST"])
+@login_required
 def submit_exercise():
     import json
-    
-    # Check if user is authenticated
-    if session.get("is_guest") or not session.get("user_id"):
-        # Save exercise data to session for after login
-        session['pending_exercise_data'] = dict(request.form)
-        session['return_to'] = '/save_exercise'
-        
-        # Redirect to landing page for Clerk authentication
-        landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-        return redirect(f"{landing_url}?redirect_to=/save_exercise&auth_required=true")
 
     # Get JSON data from form
     love = request.form.get("love", "[]")
@@ -987,8 +971,9 @@ Format in clean markdown with headers."""
 
 
 @app.route("/api/add_points", methods=["POST"])
+@login_required
 def add_points():
-    """Award Surfer Points to user (works for both authenticated and guest users)"""
+    """Award Surfer Points to authenticated user"""
     try:
         data = request.get_json()
         points = int(data.get("points", 0))
@@ -996,42 +981,27 @@ def add_points():
         if points <= 0 or points > 100:
             return jsonify({"error": "Invalid points amount"}), 400
         
-        # Check if user is authenticated or guest
-        if session.get("user_id") and not session.get("is_guest"):
-            # Authenticated user - save to database
-            user = db.execute("SELECT surfer_points FROM users WHERE id = ?", session["user_id"])
-            if not user:
-                return jsonify({"error": "User not found"}), 404
-            
-            current_points = user[0]["surfer_points"] or 0
-            new_total = current_points + points
-            
-            # Update points in database
-            db.execute(
-                "UPDATE users SET surfer_points = ? WHERE id = ?",
-                new_total, session["user_id"]
-            )
-            
-            session["total_points"] = new_total
-            
-            return jsonify({
-                "success": True,
-                "points_awarded": points,
-                "total_points": new_total,
-                "is_guest": False
-            })
-        else:
-            # Guest user - save to session only
-            current_points = session.get("guest_points", 0)
-            new_total = current_points + points
-            session["guest_points"] = new_total
-            
-            return jsonify({
-                "success": True,
-                "points_awarded": points,
-                "total_points": new_total,
-                "is_guest": True
-            })
+        # Get current points
+        user = db.execute("SELECT surfer_points FROM users WHERE id = ?", session["user_id"])
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        current_points = user[0]["surfer_points"] or 0
+        new_total = current_points + points
+        
+        # Update points in database
+        db.execute(
+            "UPDATE users SET surfer_points = ? WHERE id = ?",
+            new_total, session["user_id"]
+        )
+        
+        session["total_points"] = new_total
+        
+        return jsonify({
+            "success": True,
+            "points_awarded": points,
+            "total_points": new_total
+        })
             
     except Exception as e:
         app.logger.error(f"Add points error: {e}")
@@ -1039,30 +1009,19 @@ def add_points():
 
 
 @app.route("/api/get_points", methods=["GET"])
+@login_required
 def get_points():
-    """Get user's current Surfer Points (works for both authenticated and guest users)"""
+    """Get user's current Surfer Points"""
     try:
-        # Check if user is authenticated or guest
-        if session.get("user_id") and not session.get("is_guest"):
-            # Authenticated user - get from database
-            user = db.execute("SELECT surfer_points FROM users WHERE id = ?", session["user_id"])
-            if not user:
-                return jsonify({"error": "User not found"}), 404
-            
-            points = user[0]["surfer_points"] or 0
-            return jsonify({
-                "points": points,
-                "success": True,
-                "is_guest": False
-            })
-        else:
-            # Guest user - get from session
-            points = session.get("guest_points", 0)
-            return jsonify({
-                "points": points,
-                "success": True,
-                "is_guest": True
-            })
+        user = db.execute("SELECT surfer_points FROM users WHERE id = ?", session["user_id"])
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        
+        points = user[0]["surfer_points"] or 0
+        return jsonify({
+            "points": points,
+            "success": True
+        })
         
     except Exception as e:
         app.logger.error(f"Get points error: {e}")

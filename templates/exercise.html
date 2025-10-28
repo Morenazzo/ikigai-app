@@ -1394,13 +1394,7 @@ function submitExercise() {
     `;
     document.body.appendChild(achievementBanner);
     
-    // Remove banner after 4 seconds
-    setTimeout(() => {
-        achievementBanner.style.animation = 'fadeOut 0.5s';
-        setTimeout(() => achievementBanner.remove(), 500);
-    }, 4000);
-    
-    // Collect ikigai evaluations
+    // Collect ikigai evaluations (preparar datos mientras se muestra el festejo)
     const evaluations = [];
     const ikigaiInputs = document.querySelectorAll('[data-category="ikigai"]');
     ikigaiInputs.forEach((input, index) => {
@@ -1435,8 +1429,15 @@ function submitExercise() {
     // Clear saved progress
     localStorage.removeItem('ikigaiProgress');
     
-    // Submit form
-    document.getElementById('finalForm').submit();
+    // Remove banner after 7 seconds y luego submit
+    setTimeout(() => {
+        achievementBanner.style.animation = 'fadeOut 0.5s';
+        setTimeout(() => {
+            achievementBanner.remove();
+            // Submit form DESPUÉS del festejo
+            document.getElementById('finalForm').submit();
+        }, 500);
+    }, 7000);
 }
 
 // Keyboard shortcuts
