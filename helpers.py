@@ -27,14 +27,19 @@ def apology(message, code=400):
 
 def login_required(f):
     """
-    Decorate routes to require login.
-
-    http://flask.pocoo.org/docs/0.12/patterns/viewdecorators/
+    Decorate routes to require login via Clerk.
+    Redirects to landing page for authentication if not logged in.
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-            return redirect("/login")
+            import os
+            from flask import request
+            # Redirect to landing page with sign-up for Clerk authentication
+            landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+            # Store where they were trying to go
+            session['return_to'] = request.path
+            return redirect(f"{landing_url}/sign-up")
         return f(*args, **kwargs)
     return decorated_function
 
