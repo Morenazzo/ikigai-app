@@ -18,6 +18,8 @@ export default function SignInPage() {
         {/* Clerk Sign In Component */}
         <div className="flex justify-center">
           <SignIn
+            afterSignInUrl="/start-exercise"
+            redirectUrl="/start-exercise"
             appearance={{
               elements: {
                 rootBox: "mx-auto",

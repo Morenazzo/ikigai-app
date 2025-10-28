@@ -13,9 +13,13 @@ export default function Hero() {
     // Si está cargando, esperar
     if (!isLoaded) return;
     
-    // SIEMPRE redirigir a /start-exercise para autenticación
-    // Esto asegura que el usuario esté autenticado antes de empezar
-    router.push('/start-exercise');
+    if (isSignedIn) {
+      // Si ya está autenticado, ir a start-exercise para obtener token
+      router.push('/start-exercise');
+    } else {
+      // Si no está autenticado, ir directo a sign-up
+      router.push('/sign-up');
+    }
   };
 
   return (
