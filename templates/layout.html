@@ -51,13 +51,11 @@
                                 </button>
                             </div>
                         </li>
-                        {% if session.get("user_id") %}
                         <li class="nav-item">
                             <span class="nav-link" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: white; padding: 8px 15px; border-radius: 25px; font-weight: bold; box-shadow: 0 2px 10px rgba(255, 165, 0, 0.3); font-size: 0.9rem;">
-                                🏄‍♂️ <span id="totalPoints">{{ session.get("total_points", 0) }}</span> {{ t('nav_points') }}
+                                🏄‍♂️ <span id="totalPoints">{{ session.get("guest_points", session.get("total_points", 0)) }}</span> {{ t('nav_points') }}
                             </span>
                         </li>
-                        {% endif %}
                     </ul>
                 </div>
             </div>
