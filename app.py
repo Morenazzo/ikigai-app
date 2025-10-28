@@ -839,6 +839,71 @@ Example format: ["keyword1", "keyword2", "keyword3"]"""
         return jsonify({"error": "Failed to generate Ikigai suggestions"}), 500
 
 
+@app.route("/ai/suggest_impact", methods=["POST"])
+def ai_suggest_impact():
+    """AI suggestions for impact vision - helps improve or generate impact statement"""
+    if not AI_ENABLED:
+        return jsonify({"error": "AI features are not enabled. Please configure OPENAI_API_KEY."}), 503
+    
+    try:
+        data = request.get_json()
+        ikigai = data.get("ikigai", [])
+        current_draft = data.get("current_draft", "")
+        
+        if not ikigai:
+            return jsonify({"error": "Ikigai keywords required"}), 400
+        
+        # Different prompts for improvement vs generation
+        if current_draft:
+            # Improve existing text
+            prompt = f"""The user has discovered their Ikigai: {', '.join(ikigai)}
+
+They have written this draft impact vision:
+"{current_draft}"
+
+Please improve and expand this vision to make it more powerful, specific, and inspiring. The improved version should:
+- Be 3-5 sentences
+- Clearly describe how they will impact over a million lives
+- Connect their Ikigai keywords to tangible outcomes
+- Be inspiring yet realistic
+- Use "I" statements (first person)
+
+Provide ONLY the improved impact vision text, nothing else."""
+        else:
+            # Generate new text
+            prompt = f"""Based on these Ikigai keywords: {', '.join(ikigai)}
+
+Create a powerful 3-5 sentence impact vision that describes how this person will use their divine purpose to transform over a million lives. The vision should:
+- Start with "I will" or similar strong statement
+- Be specific about who they'll help and how
+- Connect their unique gifts to measurable impact
+- Be inspiring yet achievable
+- Use first person ("I")
+
+Provide ONLY the impact vision text, nothing else."""
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are an inspirational life coach helping people articulate their divine mission. Write powerful, authentic impact visions that connect purpose to action."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.8,
+            max_tokens=300
+        )
+        
+        suggestion = response.choices[0].message.content.strip()
+        
+        # Remove quotes if GPT wrapped the response
+        suggestion = suggestion.strip('"\'')
+        
+        return jsonify({"suggestion": suggestion})
+        
+    except Exception as e:
+        app.logger.error(f"AI impact suggestion error: {e}")
+        return jsonify({"error": "Failed to generate impact suggestion"}), 500
+
+
 @app.route("/ai/analyze_results", methods=["POST"])
 def ai_analyze_results():
     """AI analysis and advice for completed Ikigai"""

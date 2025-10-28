@@ -704,6 +704,15 @@
         <h2 class="step-title">🌍 {{ t('superpower_mission') }} 🌍</h2>
         <p class="step-description">{{ t('superpower_mission_desc') }} 🦸‍♂️✨</p>
         
+        <div id="aiContainer11" class="ai-container" style="text-align: center; margin-bottom: 20px; display: none;">
+            <button class="btn btn-secondary" onclick="getImpactSuggestion()" id="aiBtn11" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                ✨ {{ t('ai_suggestions') }}
+            </button>
+            <div id="aiLoading11" style="display: none; margin-top: 10px; color: var(--purple);">
+                <span class="spinner-border spinner-border-sm" role="status"></span> {{ t('analyzing_ai') }}
+            </div>
+        </div>
+        
         <div class="input-group" style="max-width: 800px; margin: 0 auto;">
             <div style="margin-bottom: 20px;">
                 <textarea 
@@ -952,9 +961,9 @@ function startStep(step) {
     if (inputGroup) inputGroup.style.display = 'block';
     if (buttonGroup) buttonGroup.style.display = 'flex';
     
-    // Hide all AI containers then show only the current step's container after timer starts (steps 5-9)
+    // Hide all AI containers then show only the current step's container after timer starts (steps 5-9, 11)
     document.querySelectorAll('.ai-container').forEach(el => { el.style.display = 'none'; });
-    if (step >= 5 && step <= 9) {
+    if ((step >= 5 && step <= 9) || step === 11) {
         const aiContainer = document.getElementById(`aiContainer${step}`);
         if (aiContainer) aiContainer.style.display = 'block';
     }
@@ -1557,6 +1566,68 @@ async function getIkigaiSuggestions() {
     } catch (error) {
         console.error('AI Error:', error);
         alert('Hubo un error al generar tu Ikigai. Por favor verifica tu configuración de OpenAI API.');
+    } finally {
+        document.getElementById(btnId).disabled = false;
+        document.getElementById(loadingId).style.display = 'none';
+    }
+}
+
+async function getImpactSuggestion() {
+    const btnId = 'aiBtn11';
+    const loadingId = 'aiLoading11';
+    const impactInput = document.getElementById('impactInput');
+    
+    // Collect ikigai keywords
+    const ikigaiData = collectCategoryData('ikigai');
+    
+    if (!ikigaiData.length) {
+        alert('Por favor completa tu Ikigai primero para obtener una sugerencia de impacto personalizada.');
+        return;
+    }
+    
+    // Get current draft if any
+    const currentDraft = impactInput.value.trim();
+    
+    // Show loading
+    document.getElementById(btnId).disabled = true;
+    document.getElementById(loadingId).style.display = 'block';
+    
+    try {
+        const response = await fetch('/ai/suggest_impact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ikigai: ikigaiData,
+                current_draft: currentDraft
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+        }
+        
+        // Offer to use suggestion or improve current text
+        if (currentDraft) {
+            const useAI = confirm(`✨ IA ha mejorado tu texto de impacto.\n\n¿Quieres reemplazar tu texto actual con la versión mejorada?\n\n(Click "Cancelar" para mantener tu texto original)`);
+            if (useAI) {
+                impactInput.value = data.suggestion;
+                impactInput.dispatchEvent(new Event('input', { bubbles: true }));
+                alert('✨ ¡Tu visión de impacto ha sido mejorada! Puedes seguir editándola.');
+            }
+        } else {
+            impactInput.value = data.suggestion;
+            impactInput.dispatchEvent(new Event('input', { bubbles: true }));
+            alert('✨ IA ha generado una visión de impacto basada en tu Ikigai. ¡Personalízala como desees!');
+        }
+        
+    } catch (error) {
+        console.error('AI Error:', error);
+        alert('Hubo un error al generar la sugerencia de impacto. Por favor verifica tu configuración de OpenAI API.');
     } finally {
         document.getElementById(btnId).disabled = false;
         document.getElementById(loadingId).style.display = 'none';
