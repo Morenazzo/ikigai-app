@@ -3,7 +3,7 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Features() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   const features = t.features.items.map((item, index) => {
     const styles = [
@@ -99,12 +99,13 @@ export default function Features() {
             </p>
           </div>
 
-          {/* Ikigai Diagram Placeholder - You can replace with actual image */}
-          <div className="relative aspect-video bg-gradient-to-br from-navy-dark to-teal-dark rounded-2xl overflow-hidden">
+          {/* Ikigai Diagram - Surfing Digital branded */}
+          <div className="relative aspect-square max-w-md md:max-w-lg mx-auto bg-navy-dark rounded-2xl overflow-hidden shadow-2xl">
             <img 
-              src="https://imageio.forbes.com/blogs-images/chrismyers/files/2018/02/ikigai-1.png?format=png&width=500" 
-              alt="Diagrama Ikigai"
+              src={`/images/ikigai-${language}.svg`}
+              alt={language === 'es' ? 'Diagrama Ikigai - Tu Razón de Ser' : 'Ikigai Diagram - Your Reason for Being'}
               className="w-full h-full object-contain p-2 md:p-4"
+              loading="lazy"
             />
           </div>
 

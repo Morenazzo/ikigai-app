@@ -1,0 +1,41 @@
+<svg width="1080" height="1080" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="#001639"/>
+  
+  <!-- Circles -->
+  <circle cx="540" cy="350" r="200" fill="#FFD966" opacity="0.7"/>
+  <circle cx="400" cy="550" r="200" fill="#0BB7B7" opacity="0.7"/>
+  <circle cx="680" cy="550" r="200" fill="#E85D75" opacity="0.7"/>
+  <circle cx="540" cy="730" r="200" fill="#3B82F6" opacity="0.7"/>
+  
+  <!-- Center -->
+  <circle cx="540" cy="540" r="120" fill="#001639"/>
+  
+  <!-- Text -->
+  <text x="540" y="280" text-anchor="middle" fill="#001639" font-size="32" font-weight="bold">Lo que</text>
+  <text x="540" cy="310" text-anchor="middle" fill="#001639" font-size="38" font-weight="bold">AMAS</text>
+  
+  <text x="320" y="520" text-anchor="middle" fill="#001639" font-size="28" font-weight="bold">Lo que se</text>
+  <text x="320" y="555" text-anchor="middle" fill="#001639" font-size="32" font-weight="bold">te DA BIEN</text>
+  
+  <text x="760" y="520" text-anchor="middle" fill="#FFFFFF" font-size="28" font-weight="bold">Lo que</text>
+  <text x="760" y="555" text-anchor="middle" fill="#FFFFFF" font-size="28" font-weight="bold">el mundo</text>
+  <text x="760" y="590" text-anchor="middle" fill="#FFFFFF" font-size="32" font-weight="bold">NECESITA</text>
+  
+  <text x="540" y="800" text-anchor="middle" fill="#001639" font-size="26" font-weight="bold">Lo que te pueden</text>
+  <text x="540" y="835" text-anchor="middle" fill="#001639" font-size="32" font-weight="bold">PAGAR</text>
+  
+  <text x="540" y="535" text-anchor="middle" fill="#0BB7B7" font-size="48" font-weight="bold">Ikigai</text>
+  <text x="540" y="570" text-anchor="middle" fill="#0BB7B7" font-size="24">生き甲斐</text>
+  
+  <!-- Intersections -->
+  <text x="420" y="400" text-anchor="middle" fill="#FFB366" font-size="24" font-weight="bold">PASIÓN</text>
+  <text x="660" y="400" text-anchor="middle" fill="#FF9999" font-size="24" font-weight="bold">MISIÓN</text>
+  <text x="420" y="680" text-anchor="middle" fill="#4A9EDB" font-size="22" font-weight="bold">PROFESIÓN</text>
+  <text x="660" y="680" text-anchor="middle" fill="#9B7EBD" font-size="22" font-weight="bold">VOCACIÓN</text>
+  
+  <!-- Logo placeholder -->
+  <text x="900" y="1000" text-anchor="middle" fill="#0BB7B7" font-size="32" font-weight="bold">Surfing</text>
+  <text x="900" y="1040" text-anchor="middle" fill="#0BB7B7" font-size="32" font-weight="bold">Digital</text>
+</svg>
+
