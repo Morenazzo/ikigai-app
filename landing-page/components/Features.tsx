@@ -99,13 +99,14 @@ export default function Features() {
             </p>
           </div>
 
-          {/* Ikigai Diagram - Surfing Digital branded */}
-          <div className="relative aspect-square max-w-md md:max-w-lg mx-auto bg-navy-dark rounded-2xl overflow-hidden shadow-2xl">
+          {/* Ikigai Diagram - Surfing Digital Official */}
+          <div className="relative aspect-square max-w-sm md:max-w-md mx-auto">
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-light/20 to-blue-light/20 blur-3xl rounded-full"></div>
             <img 
-              src={`/images/ikigai-${language}.svg`}
-              alt={language === 'es' ? 'Diagrama Ikigai - Tu Razón de Ser' : 'Ikigai Diagram - Your Reason for Being'}
-              className="w-full h-full object-contain p-2 md:p-4"
-              loading="lazy"
+              src={`/images/ikigai-${language}.png`}
+              alt={language === 'es' ? 'Diagrama Ikigai - Tu Razón de Ser | Surfing Digital' : 'Ikigai Diagram - Your Reason for Being | Surfing Digital'}
+              className="relative w-full h-full object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
+              loading="eager"
             />
           </div>
 
