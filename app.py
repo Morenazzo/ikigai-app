@@ -275,9 +275,10 @@ def after_request(response):
 
 
 @app.route("/")
-def about():
-    """Teach the Ikigai Concept"""
-    return render_template("about.html")
+def index():
+    """Redirect to landing page"""
+    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    return redirect(landing_url)
 
 
 @app.route("/auth/clerk-callback", methods=["POST"])
