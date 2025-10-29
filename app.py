@@ -24,18 +24,16 @@ app = Flask(__name__)
 # Secret key for sessions
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
 
-# Configure session - use signed cookies for serverless compatibility
+# Configure session for serverless compatibility
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
 
-# Only initialize Flask-Session if not in serverless environment
-# Vercel sets VERCEL_ENV automatically, AWS Lambda sets AWS_LAMBDA_FUNCTION_NAME
-if os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
-    # In serverless, use built-in Flask sessions (signed cookies)
-    app.config["SESSION_TYPE"] = None
-else:
-    # In local development, use filesystem sessions
+# Only initialize Flask-Session in local development, not in serverless
+# Vercel sets VERCEL_ENV automatically
+if not os.getenv("VERCEL_ENV"):
+    # Local development: use filesystem sessions
+    app.config["SESSION_TYPE"] = "filesystem"
     Session(app)
+# In serverless (Vercel), use Flask's default cookie-based sessions (no Flask-Session extension)
 
 
 # Make translations available in all templates
