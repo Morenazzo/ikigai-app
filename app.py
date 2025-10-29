@@ -277,8 +277,12 @@ def after_request(response):
 @app.route("/")
 def index():
     """Redirect to landing page"""
+    from flask import make_response
     landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-    return redirect(landing_url)
+    # Use 301 permanent redirect with absolute URL
+    response = make_response('', 301)
+    response.headers['Location'] = landing_url
+    return response
 
 
 @app.route("/auth/clerk-callback", methods=["GET", "POST"])
