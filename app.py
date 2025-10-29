@@ -281,12 +281,18 @@ def index():
     return redirect(landing_url)
 
 
-@app.route("/auth/clerk-callback", methods=["POST"])
+@app.route("/auth/clerk-callback", methods=["GET", "POST"])
 def clerk_callback():
     """Handle Clerk authentication callback"""
-    clerk_token = request.form.get('clerk_token')
-    email = request.form.get('email')
-    lang = request.form.get('lang', 'es')
+    # Support both GET (with query params) and POST (with form data)
+    if request.method == "POST":
+        clerk_token = request.form.get('clerk_token')
+        email = request.form.get('email')
+        lang = request.form.get('lang', 'es')
+    else:  # GET
+        clerk_token = request.args.get('clerk_token')
+        email = request.args.get('email')
+        lang = request.args.get('lang', 'es')
     
     if clerk_token and email:
         # Verify token with Clerk

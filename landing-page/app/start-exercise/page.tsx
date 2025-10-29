@@ -31,36 +31,17 @@ export default function StartExercise() {
           try {
             const token = await getToken();
             const language = getLanguage();
+            const email = user?.primaryEmailAddress?.emailAddress || '';
             const flaskUrl = process.env.NEXT_PUBLIC_FLASK_URL || 'http://localhost:5001';
             
-            // Create form to POST to Flask with token
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `${flaskUrl}/auth/clerk-callback`;
+            // Redirect to Flask with token in URL (GET request)
+            const params = new URLSearchParams({
+              clerk_token: token || '',
+              email: email,
+              lang: language
+            });
             
-            // Add token
-            const tokenInput = document.createElement('input');
-            tokenInput.type = 'hidden';
-            tokenInput.name = 'clerk_token';
-            tokenInput.value = token || '';
-            form.appendChild(tokenInput);
-            
-            // Add language
-            const langInput = document.createElement('input');
-            langInput.type = 'hidden';
-            langInput.name = 'lang';
-            langInput.value = language;
-            form.appendChild(langInput);
-            
-            // Add user email
-            const emailInput = document.createElement('input');
-            emailInput.type = 'hidden';
-            emailInput.name = 'email';
-            emailInput.value = user?.primaryEmailAddress?.emailAddress || '';
-            form.appendChild(emailInput);
-            
-            document.body.appendChild(form);
-            form.submit();
+            window.location.href = `${flaskUrl}/auth/clerk-callback?${params.toString()}`;
           } catch (error) {
             console.error('Error getting Clerk token:', error);
             // Fallback: redirect without token
