@@ -9,7 +9,7 @@ load_dotenv()
 # Use custom SQL wrapper for better serverless compatibility
 from db_helper import SQL
 
-from flask import Flask, redirect, render_template, request, session, jsonify
+from flask import Flask, redirect, render_template, request, session, jsonify, make_response
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from openai import OpenAI
@@ -277,7 +277,6 @@ def after_request(response):
 @app.route("/")
 def index():
     """Redirect to landing page"""
-    from flask import make_response
     landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
     # Use 301 permanent redirect with absolute URL
     response = make_response('', 301)
