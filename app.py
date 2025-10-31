@@ -293,7 +293,12 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    """Redirect to landing page"""
+    """Redirect to landing page or exercise if logged in"""
+    # If user is logged in, send them to exercise
+    if session.get("user_id"):
+        return redirect("/exercise")
+    
+    # Otherwise redirect to landing page
     landing_url = get_landing_url()
     # Use 301 permanent redirect with absolute URL
     response = make_response('', 301)
