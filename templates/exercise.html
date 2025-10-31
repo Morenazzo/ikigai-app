@@ -1247,9 +1247,9 @@ function nextStep() {
     // Auto-save before moving to next step
     autoSaveData();
     
-    // 🏄‍♂️ AWARD SURFER POINTS! (10 points per step)
+    // 🏄‍♂️ AWARD SURFER POINTS! (10 points per step) - SIN SONIDO para evitar repetición
     if (typeof awardPoints === 'function') {
-        awardPoints(10, true);
+        awardPoints(10, false);  // false = sin sonido
     }
     
     // Stop current timer

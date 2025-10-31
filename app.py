@@ -624,21 +624,24 @@ def thanks():
 
 @app.route("/results")
 def results():
-    """Display all stored Ikigai responses."""
+    """Display all stored Ikigai responses - ULTRA SAFE VERSION."""
     import json
     responses = []
+    
     try:
         # Always attempt to fetch results, but fail gracefully
-        fetched = db.execute(
-            "SELECT * FROM ikigai_responses ORDER BY timestamp DESC"
-        ) if db else []
-        responses = fetched or []
+        if not db:
+            app.logger.warning("Database not available")
+            return render_template("results.html", responses=[])
+            
+        fetched = db.execute("SELECT * FROM ikigai_responses ORDER BY timestamp DESC")
+        responses = fetched if fetched else []
         
         # Parse ikigai_evaluations JSON into a list for template usage
         for row in responses:
             # Ensure all required fields exist with default values
             if isinstance(row, dict):
-                # Set defaults for all fields
+                # Set defaults for ALL possible fields
                 row.setdefault("love", "")
                 row.setdefault("good", "")
                 row.setdefault("paid", "")
@@ -652,27 +655,35 @@ def results():
                 row.setdefault("timestamp", "")
                 row.setdefault("id", 0)
                 row.setdefault("ikigai_evaluations", None)
+                row.setdefault("purpose", None)
                 
                 # Handle legacy 'purpose' field (rename to 'profession' if exists)
                 if row.get("purpose") and not row.get("profession"):
                     row["profession"] = row["purpose"]
                 
+                # Ensure profession exists
+                if not row.get("profession"):
+                    row["profession"] = ""
+                
                 # Parse ikigai_evaluations
                 eval_str = row.get("ikigai_evaluations")
                 parsed = []
-                if eval_str and eval_str.strip():
+                if eval_str:
                     try:
-                        parsed = json.loads(eval_str)
-                        if not isinstance(parsed, list):
-                            parsed = []
-                    except Exception as parse_error:
+                        if isinstance(eval_str, str) and eval_str.strip():
+                            parsed = json.loads(eval_str)
+                            if not isinstance(parsed, list):
+                                parsed = []
+                    except (json.JSONDecodeError, TypeError, ValueError) as parse_error:
                         app.logger.warning("Error parsing ikigai_evaluations: %s", parse_error)
                         parsed = []
                 
                 row["ikigai_eval_list"] = parsed
                 
     except Exception as e:
-        app.logger.error("Error loading results: %s", e)
+        app.logger.error("CRITICAL Error loading results: %s", e)
+        import traceback
+        app.logger.error(traceback.format_exc())
         responses = []
         
     return render_template("results.html", responses=responses)
