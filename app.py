@@ -623,21 +623,24 @@ def thanks():
 
 @app.route("/results")
 def results():
-    """Display all stored Ikigai responses - EMERGENCY ULTRA SAFE VERSION."""
+    """Display all stored Ikigai responses - MAXIMUM SAFETY VERSION."""
     import json
+    import traceback
     responses = []
     
     try:
         # Always attempt to fetch results, but fail gracefully
         if not db:
-            app.logger.warning("Database not available")
+            app.logger.warning("Database not available - returning empty results")
             return render_template("results.html", responses=[])
         
         try:
             fetched = db.execute("SELECT * FROM ikigai_responses ORDER BY timestamp DESC")
             responses = fetched if fetched else []
+            app.logger.info(f"Successfully fetched {len(responses)} responses")
         except Exception as db_error:
             app.logger.error(f"Database query failed: {db_error}")
+            app.logger.error(traceback.format_exc())
             return render_template("results.html", responses=[])
         
         # Parse ikigai_evaluations JSON into a list for template usage
