@@ -9,7 +9,7 @@ load_dotenv()
 # Use custom SQL wrapper for better serverless compatibility
 from db_helper import SQL
 
-from flask import Flask, redirect, render_template, request, session, jsonify, make_response
+from flask import Flask, redirect, render_template, request, session, jsonify, make_response, send_from_directory
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from openai import OpenAI
@@ -34,6 +34,25 @@ if not os.getenv("VERCEL_ENV"):
     app.config["SESSION_TYPE"] = "filesystem"
     Session(app)
 # In serverless (Vercel), use Flask's default cookie-based sessions (no Flask-Session extension)
+
+
+# Utility helpers
+def get_landing_url() -> str:
+    """Return absolute landing URL (ensures https scheme)."""
+    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    landing_url = (landing_url or "").strip()
+
+    if not landing_url:
+        landing_url = "https://ikigai-app-xi.vercel.app"
+
+    if not landing_url.startswith(("http://", "https://")):
+        landing_url = f"https://{landing_url.lstrip('/')}"
+
+    # Remove trailing slash to avoid double slashes when composing URLs
+    if landing_url.endswith('/'):
+        landing_url = landing_url[:-1]
+
+    return landing_url
 
 
 # Make translations available in all templates
@@ -275,11 +294,25 @@ def after_request(response):
 @app.route("/")
 def index():
     """Redirect to landing page"""
-    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
+    landing_url = get_landing_url()
     # Use 301 permanent redirect with absolute URL
     response = make_response('', 301)
     response.headers['Location'] = landing_url
     return response
+
+
+@app.route("/ikigai-app-xi.vercel.app")
+def legacy_landing_path():
+    """Handle legacy relative redirect path by sending users to landing."""
+    return redirect(get_landing_url())
+
+
+@app.errorhandler(404)
+def handle_legacy_paths(error):
+    path = (request.path or "").lower()
+    if "ikigai-app-xi.vercel.app" in path:
+        return redirect(get_landing_url())
+    return error, 404
 
 
 @app.route("/auth/clerk-callback", methods=["GET", "POST"])
@@ -316,8 +349,7 @@ def clerk_callback():
                 return redirect(f'/exercise?lang={lang}')
     
     # If authentication fails, redirect to landing page
-    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-    return redirect(landing_url)
+    return redirect(get_landing_url())
 
 
 @app.route("/exercise", methods=["GET", "POST"])
@@ -594,22 +626,66 @@ def thanks():
 def results():
     """Display all stored Ikigai responses."""
     import json
-    responses = db.execute(
-        "SELECT * FROM ikigai_responses ORDER BY timestamp DESC"
-    )
-    # Parse ikigai_evaluations JSON into a list for template usage
-    for row in responses:
-        eval_str = row.get("ikigai_evaluations") if isinstance(row, dict) else None
-        parsed = []
-        if eval_str:
-            try:
-                parsed = json.loads(eval_str)
-                if not isinstance(parsed, list):
-                    parsed = []
-            except Exception:
+    responses = []
+    try:
+        # Always attempt to fetch results, but fail gracefully
+        fetched = db.execute(
+            "SELECT * FROM ikigai_responses ORDER BY timestamp DESC"
+        ) if db else []
+        responses = fetched or []
+        
+        # Parse ikigai_evaluations JSON into a list for template usage
+        for row in responses:
+            # Ensure all required fields exist with default values
+            if isinstance(row, dict):
+                # Set defaults for all fields
+                row.setdefault("love", "")
+                row.setdefault("good", "")
+                row.setdefault("paid", "")
+                row.setdefault("needs", "")
+                row.setdefault("passion", "")
+                row.setdefault("mission", "")
+                row.setdefault("vocation", "")
+                row.setdefault("profession", "")
+                row.setdefault("ikigai", "")
+                row.setdefault("impact", "")
+                row.setdefault("timestamp", "")
+                row.setdefault("id", 0)
+                row.setdefault("ikigai_evaluations", None)
+                
+                # Handle legacy 'purpose' field (rename to 'profession' if exists)
+                if row.get("purpose") and not row.get("profession"):
+                    row["profession"] = row["purpose"]
+                
+                # Parse ikigai_evaluations
+                eval_str = row.get("ikigai_evaluations")
                 parsed = []
-        row["ikigai_eval_list"] = parsed
+                if eval_str and eval_str.strip():
+                    try:
+                        parsed = json.loads(eval_str)
+                        if not isinstance(parsed, list):
+                            parsed = []
+                    except Exception as parse_error:
+                        app.logger.warning("Error parsing ikigai_evaluations: %s", parse_error)
+                        parsed = []
+                
+                row["ikigai_eval_list"] = parsed
+                
+    except Exception as e:
+        app.logger.error("Error loading results: %s", e)
+        responses = []
+        
     return render_template("results.html", responses=responses)
+
+
+# Serve files under /assets for client-side audio and video (applause, timer videos, etc.)
+@app.route('/assets/<path:filename>')
+def serve_assets(filename):
+    try:
+        return send_from_directory('assets', filename)
+    except Exception as e:
+        app.logger.error("Asset serve error: %s", e)
+        return ("Not found", 404)
 
 
 @app.route("/save_evaluation", methods=["POST"])
@@ -680,10 +756,8 @@ def login():
     
     # Redirect to Clerk Account Portal for authentication
     clerk_domain = "https://live-jaybird-81.accounts.dev"
-    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-    
     # Redirect to landing page which will handle Clerk authentication
-    return redirect(f"{landing_url}?redirect_to={return_to}")
+    return redirect(f"{get_landing_url()}?redirect_to={return_to}")
 
 
 @app.route("/logout")
@@ -693,8 +767,7 @@ def logout():
     session.clear()
     
     # Redirect to landing page (Clerk will handle logout)
-    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-    return redirect(landing_url)
+    return redirect(get_landing_url())
 
 
 @app.route("/impact", methods=["GET", "POST"])
@@ -713,8 +786,7 @@ def register():
     session['return_to'] = return_to
     
     # Redirect to landing page for Clerk authentication
-    landing_url = os.getenv("NEXT_PUBLIC_LANDING_URL", "https://ikigai-app-xi.vercel.app")
-    return redirect(f"{landing_url}?redirect_to={return_to}")
+    return redirect(f"{get_landing_url()}?redirect_to={return_to}")
 
 
 

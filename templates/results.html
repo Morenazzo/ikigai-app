@@ -12,6 +12,7 @@
         </p>
         
         {% if session.get("points_earned") %}
+        {% if responses %}{% set row = responses|first %}{% endif %}
         <div style="margin-top: 30px; padding: 30px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); border-radius: 20px; display: inline-block; box-shadow: 0 10px 30px rgba(255, 165, 0, 0.3); animation: bounceIn 0.8s ease; min-width: 400px;">
             <div style="font-size: 48px; margin-bottom: 10px; text-align: center;">🏄‍♂️</div>
             <h2 style="color: white; margin: 0 0 15px 0; font-size: 32px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); text-align: center;">
@@ -31,7 +32,7 @@
             </div>
             {% endif %}
             
-            {% if row.ikigai_eval_list and row.ikigai_eval_list|length > 0 %}
+            {% if responses and row and row.ikigai_eval_list and row.ikigai_eval_list|length > 0 %}
             <!-- Ikigai Keyword Evaluations -->
             <div style="margin: 30px 0; padding: 30px; background: linear-gradient(135deg, rgba(11, 183, 183, 0.08) 0%, rgba(237, 74, 109, 0.08) 100%); border-radius: 20px;">
                 <h3 style="text-align: center; color: var(--navy); margin-bottom: 20px; font-size: 24px;">📊 Evaluación de Palabras Clave del Ikigai</h3>
@@ -59,16 +60,16 @@
         {% endif %}
     </div>
     
-    {% if responses %}
+    {% if responses and responses|length > 0 %}
         {% set row = responses|first %}
         <div class="result-card" style="margin-bottom: 40px; animation: fadeIn 0.5s ease;">
             <!-- Ikigai Header -->
             <div style="text-align: center; margin-bottom: 30px; padding: 40px; background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%); border-radius: 15px; color: white; position: relative; overflow: hidden;">
                 <div style="position: absolute; top: 20px; right: 20px; font-size: 40px; opacity: 0.1;">🎁</div>
                 <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">{{ t('results_title') }}</div>
-                <h2 style="color: white; margin: 0; font-size: 36px; font-weight: bold;">✨ {{ row.ikigai }} ✨</h2>
+                <h2 style="color: white; margin: 0; font-size: 36px; font-weight: bold;">✨ {{ row.ikigai|default('Tu Ikigai', true) }} ✨</h2>
                 <p style="color: white; opacity: 0.7; margin: 15px 0 20px 0; font-size: 14px;">
-                    Treasure Unlocked on {{ row.timestamp }} | Journey #{{ row.id }}
+                    Treasure Unlocked on {{ row.timestamp|default('Ahora', true) }} | Journey #{{ row.id|default(1, true) }}
                 </p>
                 
                 <!-- PDF Download Button -->
@@ -97,10 +98,12 @@
                         <span style="font-size: 24px; margin-right: 10px;">❤️</span>
                         {{ t('what_you_love') }}
                     </h4>
-                    {% if row.love %}
+                    {% if row.love and row.love|length > 0 %}
                         <ul style="color: var(--navy); line-height: 1.8; margin: 0; padding-left: 20px; list-style: none;">
                             {% for item in row.love.split(',') %}
+                                {% if item.strip() %}
                                 <li style="margin-bottom: 8px;">✓ {{ item.strip() }}</li>
+                                {% endif %}
                             {% endfor %}
                         </ul>
                     {% else %}
@@ -247,7 +250,7 @@
                 <!-- Center Ikigai -->
                 <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; text-align: center; background: linear-gradient(135deg, var(--turquoise) 0%, var(--sky-blue) 100%); color: white; padding: 30px 40px; border-radius: 50%; min-width: 200px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                     <div style="font-size: 14px; opacity: 0.9; margin-bottom: 5px;">YOUR IKIGAI</div>
-                    <div style="font-size: 18px; font-weight: bold; line-height: 1.4;">{{ latest.ikigai }}</div>
+                    <div style="font-size: 18px; font-weight: bold; line-height: 1.4;">{{ latest.ikigai|default('Tu Ikigai', true) }}</div>
                 </div>
                 
                 <!-- Top Circle: What You Love -->
@@ -255,11 +258,17 @@
                     <div style="text-align: center; max-width: 85%; max-height: 90%; overflow-y: auto;">
                         <div style="font-weight: bold; color: var(--pink); margin-bottom: 8px; font-size: 14px;">❤️ {{ t('what_you_love') }}</div>
                         <div style="font-size: 10px; color: var(--navy); line-height: 1.5; text-align: left;">
-                            {% for item in latest.love.split(',')[:5] %}
-                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
-                            {% endfor %}
-                            {% if latest.love.split(',')|length > 5 %}
-                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.love.split(',')|length - 5 }} más...</div>
+                            {% if latest.love and latest.love|length > 0 %}
+                                {% for item in latest.love.split(',')[:5] %}
+                                    {% if item.strip() %}
+                                    <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if latest.love.split(',')|length > 5 %}
+                                    <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.love.split(',')|length - 5 }} más...</div>
+                                {% endif %}
+                            {% else %}
+                                <div style="opacity: 0.5;">Sin datos</div>
                             {% endif %}
                         </div>
                     </div>
@@ -270,11 +279,17 @@
                     <div style="text-align: center; max-width: 85%; max-height: 90%; overflow-y: auto;">
                         <div style="font-weight: bold; color: var(--turquoise); margin-bottom: 8px; font-size: 14px;">💰 {{ t('what_paid_for') }}</div>
                         <div style="font-size: 10px; color: var(--navy); line-height: 1.5; text-align: left;">
-                            {% for item in latest.paid.split(',')[:5] %}
-                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
-                            {% endfor %}
-                            {% if latest.paid.split(',')|length > 5 %}
-                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.paid.split(',')|length - 5 }} más...</div>
+                            {% if latest.paid and latest.paid|length > 0 %}
+                                {% for item in latest.paid.split(',')[:5] %}
+                                    {% if item.strip() %}
+                                    <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if latest.paid.split(',')|length > 5 %}
+                                    <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.paid.split(',')|length - 5 }} más...</div>
+                                {% endif %}
+                            {% else %}
+                                <div style="opacity: 0.5;">Sin datos</div>
                             {% endif %}
                         </div>
                     </div>
@@ -285,11 +300,17 @@
                     <div style="text-align: left; max-width: 75%; max-height: 85%; overflow-y: auto;">
                         <div style="font-weight: bold; color: var(--sky-blue); margin-bottom: 8px; font-size: 14px;">⭐ {{ t('what_good_at') }}</div>
                         <div style="font-size: 10px; color: var(--navy); line-height: 1.5;">
-                            {% for item in latest.good.split(',')[:5] %}
-                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
-                            {% endfor %}
-                            {% if latest.good.split(',')|length > 5 %}
-                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.good.split(',')|length - 5 }} más...</div>
+                            {% if latest.good and latest.good|length > 0 %}
+                                {% for item in latest.good.split(',')[:5] %}
+                                    {% if item.strip() %}
+                                    <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if latest.good.split(',')|length > 5 %}
+                                    <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.good.split(',')|length - 5 }} más...</div>
+                                {% endif %}
+                            {% else %}
+                                <div style="opacity: 0.5;">Sin datos</div>
                             {% endif %}
                         </div>
                     </div>
@@ -300,11 +321,17 @@
                     <div style="text-align: left; max-width: 75%; max-height: 85%; overflow-y: auto;">
                         <div style="font-weight: bold; color: var(--purple); margin-bottom: 8px; font-size: 14px;">🌍 {{ t('what_world_needs') }}</div>
                         <div style="font-size: 10px; color: var(--navy); line-height: 1.5;">
-                            {% for item in latest.needs.split(',')[:5] %}
-                                <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
-                            {% endfor %}
-                            {% if latest.needs.split(',')|length > 5 %}
-                                <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.needs.split(',')|length - 5 }} más...</div>
+                            {% if latest.needs and latest.needs|length > 0 %}
+                                {% for item in latest.needs.split(',')[:5] %}
+                                    {% if item.strip() %}
+                                    <div style="margin-bottom: 3px;">• {{ item.strip() }}</div>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if latest.needs.split(',')|length > 5 %}
+                                    <div style="font-style: italic; opacity: 0.7; margin-top: 3px;">+{{ latest.needs.split(',')|length - 5 }} más...</div>
+                                {% endif %}
+                            {% else %}
+                                <div style="opacity: 0.5;">Sin datos</div>
                             {% endif %}
                         </div>
                     </div>
@@ -414,24 +441,25 @@
 }
 </style>
 
-{% if responses %}
+{% if responses and responses|length > 0 %}
 <!-- PDF Libraries -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
 // Store Ikigai data for AI follow-up plan
+{% set first_response = responses[0] %}
 const ikigaiData = {
-    love: "{{ responses[0].love }}",
-    good: "{{ responses[0].good }}",
-    paid: "{{ responses[0].paid }}",
-    needs: "{{ responses[0].needs }}",
-    passion: "{{ responses[0].passion }}",
-    mission: "{{ responses[0].mission }}",
-    vocation: "{{ responses[0].vocation }}",
-    profession: "{{ responses[0].profession }}",
-    ikigai: "{{ responses[0].ikigai }}",
-    impact: "{{ responses[0].impact }}"
+    love: "{{ first_response.love|default('', true)|replace('"', '\\"')|safe }}",
+    good: "{{ first_response.good|default('', true)|replace('"', '\\"')|safe }}",
+    paid: "{{ first_response.paid|default('', true)|replace('"', '\\"')|safe }}",
+    needs: "{{ first_response.needs|default('', true)|replace('"', '\\"')|safe }}",
+    passion: "{{ first_response.passion|default('', true)|replace('"', '\\"')|safe }}",
+    mission: "{{ first_response.mission|default('', true)|replace('"', '\\"')|safe }}",
+    vocation: "{{ first_response.vocation|default('', true)|replace('"', '\\"')|safe }}",
+    profession: "{{ first_response.profession|default('', true)|replace('"', '\\"')|safe }}",
+    ikigai: "{{ first_response.ikigai|default('', true)|replace('"', '\\"')|safe }}",
+    impact: "{{ first_response.impact|default('', true)|replace('"', '\\"')|safe }}"
 };
 
 async function generateAIFollowupPlan() {
@@ -517,13 +545,13 @@ async function downloadPDF() {
         
         doc.setFontSize(18);
         doc.setTextColor(237, 74, 109);
-        const ikigaiText = doc.splitTextToSize('{{ responses[0].ikigai }}', pageWidth - 2 * margin);
+        const ikigaiText = doc.splitTextToSize('{{ first_response.ikigai|default("Tu Ikigai", true)|replace("'", "\\'")|safe }}', pageWidth - 2 * margin);
         doc.text(ikigaiText, pageWidth / 2, yPos, { align: 'center' });
         yPos += ikigaiText.length * 7 + 8;
         
         doc.setFontSize(10);
         doc.setTextColor(100, 100, 100);
-        doc.text('{{ responses[0].timestamp }}', pageWidth / 2, yPos, { align: 'center' });
+        doc.text('{{ first_response.timestamp|default("Ahora", true)|safe }}', pageWidth / 2, yPos, { align: 'center' });
         yPos += 15;
         
         // Impact Vision

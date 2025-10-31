@@ -116,7 +116,39 @@
 
         // Surfer Points System 🏄‍♂️
         const waveSound = new Audio('/static/game-points.mp3');
+        waveSound.preload = 'auto';
+        waveSound.loop = false;
+        waveSound.volume = 0.6; // suaviza el volumen del "punto"
+        let waveSoundCooldown = false;
+        let lastWavePlayAt = 0;
+
         const celebrationSound = new Audio('/static/ikigai-celebration.wav');
+        celebrationSound.preload = 'auto';
+        celebrationSound.loop = false;
+        celebrationSound.volume = 1.0; // festejo final más fuerte
+
+        // Aplausos adicionales (servido desde /assets)
+        const applauseSound = new Audio('/assets/ES_Wedding%20Applause%2C%20Cheering%2C%20Medium%20Big%20-%20Epidemic%20Sound%20-%206566-13280.wav');
+        applauseSound.preload = 'auto';
+        applauseSound.loop = false;
+        applauseSound.volume = 1.0;
+
+        // Reproduce un festejo grande con aplausos
+        function playFinalCelebration() {
+            try {
+                celebrationSound.pause();
+                celebrationSound.currentTime = 0;
+                celebrationSound.play();
+            } catch (e) { console.log('Celebration audio failed:', e); }
+            // pequeño desfase para mezclar bien
+            setTimeout(() => {
+                try {
+                    applauseSound.pause();
+                    applauseSound.currentTime = 0;
+                    applauseSound.play();
+                } catch (e) { console.log('Applause audio failed:', e); }
+            }, 150);
+        }
         
         // Load points on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -147,7 +179,18 @@
                 if (data.success) {
                     updatePointsDisplay(data.total_points, true);
                     if (playSound) {
-                        waveSound.play().catch(e => console.log('Audio play failed:', e));
+                        const now = Date.now();
+                        // Filtro extra: nunca sonar más de 1 vez por 1.2s
+                        if (!waveSoundCooldown && now - lastWavePlayAt > 1200) {
+                            try {
+                                waveSound.pause();
+                                waveSound.currentTime = 0;
+                                waveSound.play();
+                                waveSoundCooldown = true;
+                                lastWavePlayAt = now;
+                                setTimeout(() => { waveSoundCooldown = false; }, 800);
+                            } catch (e) { console.log('Audio play failed:', e); }
+                        }
                     }
                     return data.total_points;
                 }
