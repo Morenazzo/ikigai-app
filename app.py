@@ -629,7 +629,7 @@ def thanks():
 
 @app.route("/results")
 def results():
-    """Display all stored Ikigai responses - ULTRA SAFE VERSION."""
+    """Display all stored Ikigai responses - EMERGENCY ULTRA SAFE VERSION."""
     import json
     responses = []
     
@@ -638,9 +638,13 @@ def results():
         if not db:
             app.logger.warning("Database not available")
             return render_template("results.html", responses=[])
-            
-        fetched = db.execute("SELECT * FROM ikigai_responses ORDER BY timestamp DESC")
-        responses = fetched if fetched else []
+        
+        try:
+            fetched = db.execute("SELECT * FROM ikigai_responses ORDER BY timestamp DESC")
+            responses = fetched if fetched else []
+        except Exception as db_error:
+            app.logger.error(f"Database query failed: {db_error}")
+            return render_template("results.html", responses=[])
         
         # Parse ikigai_evaluations JSON into a list for template usage
         for row in responses:
