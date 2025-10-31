@@ -293,30 +293,22 @@ def after_request(response):
 
 @app.route("/")
 def index():
-    """Redirect to landing page or exercise if logged in"""
-    # If user is logged in, send them to exercise
-    if session.get("user_id"):
-        return redirect("/exercise")
-    
-    # Otherwise redirect to landing page
-    landing_url = get_landing_url()
-    # Use 301 permanent redirect with absolute URL
-    response = make_response('', 301)
-    response.headers['Location'] = landing_url
-    return response
+    """EMERGENCY: Direct to exercise for demo"""
+    # TEMPORARY: Always go to exercise for client demo
+    return redirect("/exercise")
 
 
 @app.route("/ikigai-app-xi.vercel.app")
 def legacy_landing_path():
-    """Handle legacy relative redirect path by sending users to landing."""
-    return redirect(get_landing_url())
+    """Handle legacy relative redirect path by sending users to exercise."""
+    return redirect("/exercise")
 
 
 @app.errorhandler(404)
 def handle_legacy_paths(error):
     path = (request.path or "").lower()
     if "ikigai-app-xi.vercel.app" in path:
-        return redirect(get_landing_url())
+        return redirect("/exercise")
     return error, 404
 
 
