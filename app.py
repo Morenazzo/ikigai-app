@@ -369,7 +369,6 @@ def exercise():
     return render_template("exercise.html")
 
 @app.route("/submit_exercise", methods=["POST"])
-@login_required
 def submit_exercise():
     import json
 
