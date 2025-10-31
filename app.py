@@ -358,10 +358,13 @@ def clerk_callback():
 
 
 @app.route("/exercise", methods=["GET", "POST"])
-@login_required
 def exercise():
-    """Exercise to fill your ikigai - Requires authentication"""
-    # User must be authenticated to access
+    """Exercise to fill your ikigai - EMERGENCY: No auth required for demo"""
+    # TEMPORARY: Skip authentication for emergency demo
+    # Create a temporary guest session if no user
+    if not session.get("user_id"):
+        session["user_id"] = 999  # Guest user
+        session["is_guest"] = True
     
     # Capture language from URL parameter (e.g., ?lang=es or ?lang=en)
     lang_param = request.args.get('lang')
