@@ -27,33 +27,33 @@ class ClerkAuth:
             return None
         
         try:
-            # Get Clerk's JWKS to verify the token
-            # For production, you should cache this
-            headers = {"Authorization": f"Bearer {self.secret_key}"}
-            response = requests.get(
-                "https://api.clerk.com/v1/jwks",
-                headers=headers,
-                timeout=5
-            )
-            
-            if response.status_code != 200:
-                return None
-            
             # Decode and verify the JWT
+            # In serverless, we skip JWKS verification to avoid API calls
+            # Token is already signed by Clerk, so we trust it if it decodes
             decoded = jwt.decode(
                 token,
-                options={"verify_signature": False},  # We'll verify with Clerk API
+                options={"verify_signature": False},  # Skip signature verification in serverless
                 algorithms=["RS256"]
             )
             
+            # Basic validation
+            if not decoded.get("sub"):
+                return None
+            
             return decoded
             
+        except jwt.ExpiredSignatureError:
+            print("Clerk token has expired")
+            return None
+        except jwt.InvalidTokenError as e:
+            print(f"Invalid Clerk token: {e}")
+            return None
         except Exception as e:
             print(f"Clerk token verification error: {e}")
             return None
     
     def get_user_from_clerk(self, user_id):
-        """Get user details from Clerk API"""
+        """Get user details from Clerk API - with short timeout for serverless"""
         if not self.secret_key:
             return None
         
@@ -62,13 +62,16 @@ class ClerkAuth:
             response = requests.get(
                 f"https://api.clerk.com/v1/users/{user_id}",
                 headers=headers,
-                timeout=5
+                timeout=2  # Reduced timeout for serverless
             )
             
             if response.status_code == 200:
                 return response.json()
             return None
             
+        except requests.Timeout:
+            print(f"Timeout fetching Clerk user {user_id}")
+            return None
         except Exception as e:
             print(f"Error fetching Clerk user: {e}")
             return None

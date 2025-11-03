@@ -93,17 +93,21 @@ if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Try to connect to database with fallback to SQLite
+db = None
 try:
     db = SQL(DATABASE_URL)
     print(f"✓ Conectado a base de datos: {DATABASE_URL.split('@')[0] if '@' in DATABASE_URL else 'SQLite'}")
 except Exception as e:
     print(f"✗ Error conectando a base de datos: {str(e)}")
-    print(f"  Usando SQLite en /tmp como respaldo...")
-    DATABASE_URL = "sqlite:////tmp/project.db"
+    # Try in-memory SQLite as last resort
     try:
+        DATABASE_URL = "sqlite:////tmp/ikigai.db"
         db = SQL(DATABASE_URL)
+        print(f"✓ Usando SQLite en /tmp como respaldo")
     except Exception as e2:
-        print(f"✗ Error crítico: {str(e2)}")
+        print(f"⚠️ Base de datos no disponible: {str(e2)}")
+        print(f"   La aplicación funcionará en modo limitado")
+        # Set db to None - the app will handle missing db gracefully
         db = None
 
 
@@ -242,45 +246,60 @@ def ensure_tables() -> None:
         print("   The app will still run but database operations may fail.")
 
 
-# Ensure tables exist on startup
-ensure_tables()
+# Ensure tables exist on startup (but don't crash if it fails)
+try:
+    ensure_tables()
+except Exception as e:
+    print(f"⚠️ Error during table initialization: {e}")
+    print("   The app will continue but database features may be limited")
 
 
 @app.before_request
 def load_user_points():
     """Load user's surfer points and handle Clerk authentication"""
-    # Check for Clerk session token
-    clerk_token = (
-        request.headers.get("Authorization", "").replace("Bearer ", "") or
-        request.cookies.get("__session") or
-        request.cookies.get("__clerk_db_jwt")
-    )
+    # Skip if database is not available
+    if not db:
+        return
     
-    # If we have a Clerk token and no user_id, authenticate with Clerk
-    if clerk_token and not session.get("user_id"):
-        clerk = ClerkAuth()
-        user_data = clerk.verify_token(clerk_token)
+    try:
+        # Check for Clerk session token
+        clerk_token = (
+            request.headers.get("Authorization", "").replace("Bearer ", "") or
+            request.cookies.get("__session") or
+            request.cookies.get("__clerk_db_jwt")
+        )
         
-        if user_data:
-            clerk_user_id = user_data.get("sub")
-            email = user_data.get("email", f"clerk_{clerk_user_id}")
+        # If we have a Clerk token and no user_id, authenticate with Clerk
+        if clerk_token and not session.get("user_id"):
+            clerk = ClerkAuth()
+            user_data = clerk.verify_token(clerk_token)
             
-            # Sync Clerk user to our database
-            user_id = clerk.sync_user_to_db(db, clerk_user_id, email)
-            if user_id:
-                session["user_id"] = user_id
-                session["clerk_user_id"] = clerk_user_id
-                session["user_email"] = email
-    
-    # Load surfer points for authenticated user
-    user_id = session.get("user_id")
-    if user_id:
-        try:
-            user = db.execute("SELECT surfer_points FROM users WHERE id = ?", user_id)
-            if user and len(user) > 0:
-                session["total_points"] = user[0]["surfer_points"]
-        except Exception as e:
-            app.logger.error("Error loading user points: %s", e)
+            if user_data:
+                clerk_user_id = user_data.get("sub")
+                email = user_data.get("email", f"clerk_{clerk_user_id}")
+                
+                # Sync Clerk user to our database
+                try:
+                    user_id = clerk.sync_user_to_db(db, clerk_user_id, email)
+                    if user_id:
+                        session["user_id"] = user_id
+                        session["clerk_user_id"] = clerk_user_id
+                        session["user_email"] = email
+                except Exception as sync_error:
+                    print(f"Error syncing Clerk user to database: {sync_error}")
+        
+        # Load surfer points for authenticated user
+        user_id = session.get("user_id")
+        if user_id:
+            try:
+                user = db.execute("SELECT surfer_points FROM users WHERE id = ?", user_id)
+                if user and len(user) > 0:
+                    session["total_points"] = user[0]["surfer_points"]
+            except Exception as e:
+                app.logger.error("Error loading user points: %s", e)
+    except Exception as e:
+        # Don't crash the request if authentication fails
+        print(f"Error in before_request: {e}")
 
 @app.after_request
 def after_request(response):
