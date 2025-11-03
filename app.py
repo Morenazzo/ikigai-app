@@ -79,17 +79,17 @@ else:
 # Configure database (use SQLite by default, PostgreSQL if DATABASE_URL is set)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# In serverless (Vercel/Lambda), prefer /tmp SQLite or PostgreSQL
-if (os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME")) and not DATABASE_URL:
-    # Use /tmp for SQLite in serverless (ephemeral but works)
-    DATABASE_URL = "sqlite:////tmp/project.db"
-    print("⚠️  Using ephemeral database in serverless environment. Data will be lost on redeploy.")
-    print("   For production, configure a PostgreSQL DATABASE_URL.")
+# In serverless (Vercel/Lambda), always use SQLite in /tmp
+if os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"):
+    # Force SQLite in serverless for reliability
+    DATABASE_URL = "sqlite:////tmp/ikigai.db"
+    print("⚠️  Using ephemeral SQLite database in serverless environment.")
+    print("   Data will be lost on redeploy. For production, configure PostgreSQL.")
 elif not DATABASE_URL:
     DATABASE_URL = "sqlite:///project.db"
 
-# Normalize older postgres scheme
-if DATABASE_URL.startswith("postgres://"):
+# Normalize older postgres scheme (if user provides PostgreSQL)
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 # Try to connect to database with fallback to SQLite
@@ -315,6 +315,31 @@ def index():
     """EMERGENCY: Direct to exercise for demo"""
     # TEMPORARY: Always go to exercise for client demo
     return redirect("/exercise")
+
+
+@app.route("/health")
+def health_check():
+    """Health check endpoint for debugging Vercel issues"""
+    import sys
+    import platform
+    
+    health_info = {
+        "status": "ok",
+        "python_version": sys.version,
+        "platform": platform.platform(),
+        "database": "connected" if db else "not available",
+        "database_url": DATABASE_URL.split('@')[0] if '@' in DATABASE_URL else DATABASE_URL.split('///')[0] + '///',
+        "vercel_env": os.getenv("VERCEL_ENV", "not set"),
+        "ai_enabled": AI_ENABLED,
+        "modules": {
+            "flask": "ok",
+            "jwt": "ok" if 'jwt' in sys.modules else "not loaded",
+            "sqlalchemy": "ok" if 'sqlalchemy' in sys.modules else "not loaded",
+            "clerk_auth": "ok" if 'clerk_auth' in sys.modules else "not loaded"
+        }
+    }
+    
+    return jsonify(health_info)
 
 
 @app.route("/ikigai-app-xi.vercel.app")
