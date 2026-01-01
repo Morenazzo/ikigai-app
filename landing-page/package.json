@@ -11,7 +11,7 @@
   "dependencies": {
     "@clerk/localizations": "^3.26.3",
     "@clerk/nextjs": "^6.34.0",
-    "next": "^16.0.0",
+    "next": "16.0.10",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
