@@ -475,7 +475,7 @@ def submit_exercise():
         
         # Insert data
         db.execute(
-            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, ikigai, impact, ikigai_evaluations) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, profession, ikigai, impact, ikigai_evaluations) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             love_str,
             needs_str,
             paid_str,
@@ -483,11 +483,12 @@ def submit_exercise():
             passion_str,
             mission_str,
             vocation_str,
+            profession_str,
             ikigai_str,
             impact,
             ikigai_evaluations,
         )
-        
+
         # Award Surfer Points! 🏄‍♂️
         # Points breakdown:
         # - 10 points per base section (4 sections: love, good, paid, needs) = 40 points
@@ -611,7 +612,7 @@ def save_exercise():
     try:
         # Insert data
         db.execute(
-            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, ikigai, impact, ikigai_evaluations) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "INSERT INTO ikigai_responses (love, needs, paid, good, passion, mission, vocation, profession, ikigai, impact, ikigai_evaluations) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             love_str,
             needs_str,
             paid_str,
@@ -619,11 +620,12 @@ def save_exercise():
             passion_str,
             mission_str,
             vocation_str,
+            profession_str,
             ikigai_str,
             impact,
             ikigai_evaluations,
         )
-        
+
         # Award Surfer Points
         points_breakdown = {
             'base_sections': 40,
@@ -793,8 +795,11 @@ def save_evaluation():
 @app.route("/dashboard")
 def dashboard():
     """Dashboard with all Ikigai journeys"""
+    if not db:
+        return render_template("dashboard.html", responses=[], user_points=0)
+
     user_id = session.get("user_id")
-    
+
     # Get all Ikigai responses
     responses = db.execute("SELECT * FROM ikigai_responses ORDER BY timestamp DESC")
     
@@ -834,6 +839,9 @@ def logout():
 @app.route("/impact", methods=["GET", "POST"])
 def impact():
     """Show how many responses have been submitted."""
+    if not db:
+        return render_template("impact.html", responses=[], count=0)
+
     responses = db.execute("SELECT * FROM ikigai_responses ORDER BY timestamp DESC")
     count = len(responses)
     return render_template("impact.html", responses=responses, count=count)
@@ -855,6 +863,9 @@ def register():
 @app.route("/share", methods=["GET", "POST"])
 def share():
     """Page to share the stored Ikigai responses."""
+    if not db:
+        return render_template("share.html", responses=[])
+
     responses = db.execute(
         "SELECT * FROM ikigai_responses ORDER BY timestamp DESC"
     )

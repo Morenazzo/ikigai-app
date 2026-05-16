@@ -58,8 +58,11 @@ class SQL:
                     if rows:
                         return [dict(row._mapping) for row in rows]
                     return []
+                elif query_upper.startswith('INSERT'):
+                    # Return the ID of the inserted row so callers can use it as foreign key
+                    return result.lastrowid
                 else:
-                    # For INSERT/UPDATE/DELETE, return rowcount
+                    # For UPDATE/DELETE, return affected row count
                     return result.rowcount
                     
             except Exception as e:
