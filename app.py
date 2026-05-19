@@ -10,7 +10,6 @@ load_dotenv()
 from db_helper import SQL
 
 from flask import Flask, redirect, render_template, request, session, jsonify, make_response, send_from_directory
-from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from openai import OpenAI
 
@@ -31,6 +30,7 @@ app.config["SESSION_PERMANENT"] = False
 # Vercel sets VERCEL_ENV automatically
 if not os.getenv("VERCEL_ENV"):
     # Local development: use filesystem sessions
+    from flask_session import Session
     app.config["SESSION_TYPE"] = "filesystem"
     Session(app)
 # In serverless (Vercel), use Flask's default cookie-based sessions (no Flask-Session extension)
